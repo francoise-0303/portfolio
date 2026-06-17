@@ -1,0 +1,30 @@
+Night Number,Name (Te Reo),Moon Phase,Quality,Meaning / Significance,Recommended Activities,Avoid
+1,Whiro,New Moon,Unfavourable,"The new moon appears. A day of darkness associated with Whiro, the embodiment of evil and misfortune. Rest.","Rest, spiritual reflection","Planting, fishing, starting new ventures"
+2,Tirea,Waxing Crescent,Moderate,"The first sliver of light returns. Energy begins to build slowly.","Light preparation work, planning","Major new undertakings"
+3,Hoata,Waxing Crescent,Favourable,"Light increases and warms. The name suggests gleaming or shining.","Fishing, beginning new work, light planting",
+4,Ōue,Waxing Crescent,Favourable,"Favourable energy continues to build.","Ocean fishing, planting near-surface crops, gathering",
+5,Okoro,Waxing Crescent,Favourable,"Energy is strong and positive. An excellent day.","Planting root crops, deep-sea fishing, all productive work",
+6,Tamatea-āngana,First Quarter approaching,Unfavourable,"First of the Tamatea nights — associated with the atua Tamatea. Unsettled weather and energy.","Rest, indoor work","The sea, important tasks, new ventures"
+7,Tamatea-aio,First Quarter,Moderate,"A calmer Tamatea night — aio means peaceful. The disruption eases.","Light tasks, cautious fishing","Major decisions"
+8,Tamatea-whakapau,First Quarter,Unfavourable,"The last and most intense Tamatea night — whakapau means to exhaust completely.","Rest, spiritual reflection","Ocean, planting, starting anything new"
+9,Huna,Waxing Gibbous,Moderate,"Things hidden are revealed. A transitional night.","Divination, seeking lost things, moderate tasks",
+10,Ariki,Waxing Gibbous,Favourable,"The chiefly night — ariki means chief. Very favourable. High energy and good fortune.","All activities — planting, fishing, travel, ceremonies",
+11,Hotu,Waxing Gibbous,Favourable,"Abundance and fruitfulness. Excellent conditions.","Planting, harvesting, ocean fishing, communal gatherings",
+12,Māwharu,Waxing Gibbous,Favourable,"The moon is fattening, growing full. Good general conditions.","All productive work, fishing, planting above-ground crops",
+13,Ōhua,Nearly Full,Moderate,"The moon is nearly full. Good energy but beginning to peak.","Fishing, gathering, preparation work",
+14,Turu,Nearly Full,Favourable,"Standing firm — turu means a prop or support. Stable, reliable.","Planting, building, steady productive work",
+15,Rākaunui,Full Moon,Favourable,"The full moon — rākau nui, the great tree. Most favourable night of the entire cycle.","All activities highly favoured — plant, fish, gather, celebrate",
+16,Rākaumatohi,Full Moon (waning),Favourable,"The night after full moon. Very favourable — energy of Rākaunui lingers.","Continue all good work from Rākaunui",
+17,Takirau,Waning Gibbous,Favourable,"Good for fishing and ocean activities. Waning moon pulls water and draws fish.","Fishing (especially net fishing and diving), ocean activities",
+18,Ōika,Waning Gibbous,Moderate,"Energy begins to diminish. Still workable but waning.","Moderate tasks, harvesting, indoor work",
+19,Korekore-te-whiwhia,Last Quarter approaching,Unfavourable,"The void begins — korekore means nothingness. Te whiwhia: nothing is obtained.","Rest, reflection","Starting new ventures, planting"
+20,Korekore-te-rawea,Last Quarter,Unfavourable,"The void continues. Te rawea: nothing to delight in.","Spiritual work, rest, storytelling, wānanga","Planting, fishing"
+21,Korekore-piri-ki-Tangaroa,Last Quarter,Moderate,"Drawing near to Tangaroa (god of the sea). Ocean energy returns.","Preparation for fishing, mending nets, ocean observation",
+22,Tangaroa-ā-mua,Waning Crescent,Favourable,"First night of Tangaroa — god of the sea ascendant.","Ocean fishing, river fishing, shellfish gathering",
+23,Tangaroa-ā-roto,Waning Crescent,Favourable,"Tangaroa within — deep ocean energy. Very good for fishing.","Deep-sea fishing, diving, all ocean activities",
+24,Tangaroa-kiokio,Waning Crescent,Favourable,"Last night of Tangaroa. Kiokio (a fern) unfurls — final opening of this energy.","Fishing, kaimoana gathering, water-related activities",
+25,Ōtāne,Waning Crescent,Favourable,"Night of Tāne — god of forests, birds, and light.","Planting, forest gathering, bird work, land-based activities",
+26,Ōrongonui,Waning Crescent,Favourable,"Great listening — ōrongo means to listen, nui means great.","Planting, decisions, community meetings, all productive work",
+27,Mauri,Dark Moon,Moderate,"Life force — the mauri (essence) of the moon fades. Transitional.","Complete ongoing tasks, prepare for the new cycle",
+28,Mutuwhenua,Dark Moon,Unfavourable,"The land is cut off — mutu (ended) whenua (land). The darkest night.","Rest, spiritual reflection","Planting, fishing"
+29,Tireo,Dark Moon / New Moon eve,Unfavourable,"The looking — the moon watches for its own return. A liminal night between cycles.","Rest, contemplation, await the new moon","Starting anything new"

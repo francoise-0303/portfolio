@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Science of the Māramataka — When Observation Becomes Calendar</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    color: var(--text-body);
+    line-height: 1.85;
+  }
+
+  .page-header {
+    padding: 5rem 2rem 4rem;
+  }
+
+  article {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+  }
+
+  article p {
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem;
+    color: var(--text-body);
+  }
+
+  article p.lede {
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    line-height: 1.9;
+  }
+
+  article h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 400;
+    color: var(--star-white);
+    margin: 3rem 0 1.2rem;
+    line-height: 1.3;
+  }
+
+  article h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--star-gold);
+    margin: 2.5rem 0 0.8rem;
+    font-style: italic;
+  }
+
+  article blockquote {
+    border-left: 2px solid var(--accent-warm);
+    padding: 0.8rem 0 0.8rem 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+  }
+
+  article blockquote cite {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    font-style: normal;
+    font-family: 'Inter', sans-serif;
+  }
+
+  article strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  article em {
+    color: var(--text-primary);
+  }
+
+  .observation-box {
+    background: var(--deep-blue);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 1.5rem 1.8rem;
+    margin: 2rem 0;
+  }
+
+  .observation-box .obs-header {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent-teal);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .observation-box .obs-tradition {
+    font-size: 1rem;
+    color: var(--star-gold);
+    font-style: italic;
+    margin-bottom: 0.6rem;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .observation-box .obs-science {
+    font-size: 0.92rem;
+    color: var(--text-body);
+    line-height: 1.7;
+  }
+
+  .observation-box .obs-science strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .lunar-diagram {
+    background: radial-gradient(ellipse at center, #0d1225 0%, #060a14 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 2.5rem 0;
+    text-align: center;
+  }
+
+  .lunar-diagram svg {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .lunar-diagram .diagram-caption {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+    line-height: 1.5;
+  }
+
+  .separator {
+    text-align: center;
+    margin: 3rem 0;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    letter-spacing: 0.5em;
+    opacity: 0.3;
+  }
+
+  .pullquote {
+    text-align: center;
+    padding: 2rem 1rem;
+    margin: 2.5rem 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .pullquote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--star-gold);
+    line-height: 1.5;
+    margin-bottom: 0;
+    opacity: 0.85;
+  }
+
+  .end-mark {
+    text-align: center;
+    margin: 3rem 0 1rem;
+    font-size: 1.5rem;
+    color: var(--accent-teal);
+    opacity: 0.4;
+  }
+
+  .references {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  .references h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--star-white);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .references h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent-teal);
+    margin: 2rem 0 0.8rem;
+    font-weight: 500;
+  }
+
+  .references ol {
+    list-style: none;
+    counter-reset: ref-counter;
+    padding: 0;
+    margin: 0;
+  }
+
+  .references ol li {
+    counter-increment: ref-counter;
+    font-family: 'Lora', serif;
+    font-size: 0.9rem;
+    color: var(--text-body);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    position: relative;
+  }
+
+  .references ol li::before {
+    content: counter(ref-counter) ".";
+    position: absolute;
+    left: 0;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+  }
+
+  .references ol li em {
+    color: var(--text-primary);
+  }
+
+  .references ol li a {
+    color: var(--accent-teal);
+    text-decoration: none;
+    font-size: 0.82rem;
+  }
+
+  .references ol li a:hover {
+    text-decoration: underline;
+  }
+
+  .references .ref-note {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  @media (max-width: 600px) {
+    article { padding: 2rem 1.2rem; }
+    article p { font-size: 0.98rem; }
+    .pullquote p { font-size: 1.15rem; }
+    .references { padding: 0 1.2rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand">Aroha's Atelier</a>
+  <ul class="nav-links">
+    <li><a href="maramataka.html">Te Māramataka</a></li>
+    <li><a href="maramataka-local.html">Your Land</a></li>
+    <li><a href="star-journey.html">Ngā Whetū</a></li>
+    <li><a href="the-science-of-the-maramataka.html" class="active">The Science</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <p class="hero-label">Aroha's Atelier · Indigenous Reconnection</p>
+  <h1>The Science of the Māramataka</h1>
+  <p class="deck">The Māori lunar calendar is a compressed database of outcomes, generations of observation encoded into thirty named nights.</p>
+  <p class="byline">On the empirical knowledge behind the lunar cycle</p>
+</header>
+
+<article>
+
+<p class="lede">When the Māramataka says "don't fish on Whiro" or "plant on Rākaunui," it's handing you the conclusion of a very long experiment. Hundreds of years, thousands of practitioners, without ever needing to name what they were doing as science.</p>
+
+<p>Every named night of the Māramataka is a data point. Each one carries a verdict: <em>this is what happens when you fish tonight. This is what the weather does.</em> That verdict wasn't decided once. It was observed repeatedly, across generations, until the pattern was stable enough to codify and pass forward.</p>
+
+<p>Modern biology and ecology keep arriving at the same conclusions the Māramataka reached centuries ago.</p>
+
+<div class="separator">· · ·</div>
+
+<h2>The Moon Moves Water</h2>
+
+<p>Start with the most obvious mechanism: gravity. The moon's gravitational pull is the primary driver of tides, but the sun contributes too. Solar tides run at about half the strength of lunar tides. When those two forces align, you get the highest highs and lowest lows. When they work against each other, tides flatten out.</p>
+
+<p>That rhythm creates two sets of spring tides (large range) and two sets of neap tides (small range) every lunar month. The Māramataka tracks this cycle precisely.</p>
+
+<p>But tides don't just move coastlines. They move entire water columns. Plankton rise or sink, nutrients churn, currents shift, estuarine flows reverse. Every creature in the ocean responds to these movements, because their food responds to these movements.</p>
+
+<p>The thirty nights of the lunar cycle carry <em>qualities</em> that map directly onto what the tidal cycle is doing at each point.</p>
+
+<div class="observation-box">
+  <div class="obs-header">The Observation</div>
+  <div class="obs-tradition">"Rākaunui is the most favourable night for fishing"</div>
+  <div class="obs-science"><strong>What's happening:</strong> Rākaunui is the full moon, night 15. Two things converge. First, maximum moonlight penetrates the water column. Zooplankton rise to the surface, baitfish follow the plankton, predatory fish follow the baitfish. The entire food chain activates. Second, the sun and moon are in alignment, so their gravitational forces combine (solar tides adding roughly half again to the lunar pull). This produces spring tides: the largest tidal range of the month, maximum water movement, nutrients stirred up, fish concentrated in predictable feeding zones. Light plus tidal force, both peaking on the same night. Modern fishers worldwide, regardless of culture, report higher catch rates around the full moon.</div>
+</div>
+
+<p>There's another layer too. The moon follows an elliptical orbit, so its distance from Earth varies by about 50,000 km each month. When the full moon coincides with perigee (the moon's closest approach), tidal forces are even stronger than a typical full moon. Some Rākaunui nights are better than others. Experienced fishers know this. They may not use the word perigee, but they've noticed.</p>
+
+<div class="observation-box">
+  <div class="obs-header">The Observation</div>
+  <div class="obs-tradition">"Tangaroa-ā-mua, Tangaroa-ā-roto, Tangaroa-kiokio — the best nights for ocean fishing"</div>
+  <div class="obs-science"><strong>What's happening:</strong> The three Tangaroa nights (22-24) fall during the waning crescent, the transition between neap tides and the next spring tide. Water movement is increasing. Tidal flows shift from slack to active, creating the churning conditions that drive fish to feed. The Māramataka doesn't call this "the neap-to-spring transition." It names it after Tangaroa, the atua of the sea, because his domain is ascendant. The observation is identical either way: fish on these nights, and you'll catch more.</div>
+</div>
+
+<div class="observation-box">
+  <div class="obs-header">The Observation</div>
+  <div class="obs-tradition">"Don't fish on Whiro or Mutuwhenua"</div>
+  <div class="obs-science"><strong>What's happening:</strong> Whiro (night 1, new moon) and Mutuwhenua (night 28, dark moon) are the darkest nights. Here's what makes this interesting: the new moon actually produces spring tides too (sun and moon are still in alignment, pulling together). Tidal force is strong. But without moonlight, the biological cascade doesn't fire. No light reaches the water. The plankton don't rise. The baitfish don't school near the surface. Predatory fish stay deep and inactive. The Māramataka rates both Rākaunui (full moon) and Whiro (new moon) as spring tide nights, but only Rākaunui gets a favourable rating. It's tracking the fishing outcome, not the physics. And the outcome depends on light as much as tide. Generations of fishers going out on dark nights and returning with nothing is what created the rule.</div>
+</div>
+
+<h2>Kina, Pāua, and the Lunar Gonad Cycle</h2>
+
+<p>Here's one that modern marine biology has documented precisely, and the Māramataka has known for centuries.</p>
+
+<p><strong>Kina</strong> (sea urchin) are harvested for their roe, the bright orange gonads inside the shell. The quality of that roe follows the moon. Kina harvested around the full moon (Rākaunui, Rākaumatohi) have plump, rich, golden roe. Kina harvested during the dark moon or Korekore nights have thin, watery, pale roe.</p>
+
+<p>You can see the difference the moment you open the shell.</p>
+
+<p>Marine biologists have confirmed this with formal studies: sea urchin gonad indices (the ratio of gonad weight to body weight) cycle with the lunar month. The gonads swell in the lead-up to the full moon and recede afterward. The mechanism is tied to reproductive cycling and feeding patterns driven by tidal and light cues.</p>
+
+<p>The Māramataka skips the mechanism. It says: <em>harvest kina on Rākaunui.</em> The result speaks for itself.</p>
+
+<p>Similarly, <strong>pāua</strong> (abalone) feed more actively during certain lunar phases. Their grazing patterns (visible as trails on rocks) intensify during the waxing moon and around full moon. Gatherers who timed their collection to these phases consistently found more accessible, better-conditioned pāua.</p>
+
+<h2>The Tuna Migration</h2>
+
+<p>Tuna (freshwater eel, both longfin and shortfin) spend most of their lives in rivers and lakes. But when they're ready to breed, after decades of growth, they migrate downstream to the ocean, swimming thousands of kilometres to deep ocean trenches to spawn.</p>
+
+<p>The Māramataka places prime tuna trapping in <strong>Paenga-whāwhā and Haratua</strong> (autumn), and specifically on the dark moon nights with rain.</p>
+
+<div class="observation-box">
+  <div class="obs-header">The Observation</div>
+  <div class="obs-tradition">"Set your hīnaki on the dark nights of autumn, when rain swells the rivers"</div>
+  <div class="obs-science"><strong>What's happening:</strong> Modern eel biologists have confirmed that freshwater eels across the world (Aotearoa, Europe, Japan, the Americas) migrate on <strong>dark, rainy nights in autumn</strong>. Three triggers converge: (1) shortening daylight signals the season, (2) rainfall raises river levels and creates downstream flow, and (3) the absence of moonlight provides cover from predators. The eels won't run on bright moonlit nights. They wait for darkness. The Māramataka captures all of these variables: the right month (autumn), the right lunar phase (dark moon, Mutuwhenua, Whiro), and the right weather (rain). A fisherperson following the Māramataka sets their hīnaki at exactly the right moment, without needing to know the biology.</div>
+</div>
+
+<p>This is what compressed observational knowledge looks like. The Māramataka doesn't teach you the reproductive endocrinology of the eel. It gives you the outcome: <em>this night, in this season, with this weather. Set your trap.</em></p>
+
+<div class="pullquote">
+  <p>The night names are the data labels. Each one carries the accumulated outcome of centuries of practice.</p>
+</div>
+
+<h2>Planting by the Moon</h2>
+
+<p>The Māramataka's planting guidance follows a principle found in traditional agriculture worldwide: plant above-ground crops during the waxing moon, and root crops during the waning moon.</p>
+
+<p>The observation is consistent: seeds planted during the waxing phase (nights 3-14, building toward Rākaunui) germinate faster and produce more vigorous upward growth. Seeds planted during the waning phase (nights 17-26, after Rākaunui) put more energy into root development.</p>
+
+<p>The most likely mechanism (and this is where science gets cautious, because the research is ongoing) involves <strong>soil moisture</strong>.</p>
+
+<p>The same gravitational pull that moves ocean tides also moves water in soil. It's a much smaller effect, but it's measurable. During the waxing moon (building toward full), soil moisture rises slightly toward the surface. Seeds at the surface have better access to water for germination. Roots in the upper soil layer are better hydrated. During the waning moon, moisture settles slightly deeper, favouring root elongation as roots follow the water downward.</p>
+
+<p>Moonlight itself plays a role too. Even the modest light of a waxing moon affects photosensitive hormones in plants, the same phytochromes that respond to day length. Increased night-time light during the waxing and full moon phases can subtly influence germination and early growth patterns.</p>
+
+<div class="observation-box">
+  <div class="obs-header">The Observation</div>
+  <div class="obs-tradition">"Don't plant on Tamatea nights"</div>
+  <div class="obs-science"><strong>What's happening:</strong> The three Tamatea nights (6-8) fall around the first quarter moon, when the sun and moon are at right angles to Earth. The sun's gravitational pull partially cancels the moon's, producing <strong>neap tides</strong> (the smallest tidal range of the month). Soil moisture sits at an awkward midpoint, neither the rising pull of the waxing phase nor the settled rootward draw of the waning. Weather is empirically more changeable during these transitional nights (atmospheric tidal effects are measurable, if small). Gardeners who planted on these nights got inconsistent results. Sometimes fine, often poor. Over enough seasons, the verdict became: don't bother. Wait.</div>
+</div>
+
+<p>Biodynamic agriculture, developed in early 20th-century Europe by Rudolf Steiner, arrived at nearly identical lunar planting guidelines through its own framework. Two knowledge systems, developed independently on opposite sides of the planet, converging on the same calendar of favourable and unfavourable planting days. That convergence is itself a kind of evidence.</p>
+
+<h2>The Tamatea Problem</h2>
+
+<p>The three Tamatea nights deserve special attention because they illustrate something important about how the Māramataka works.</p>
+
+<p>Tamatea-āngana, Tamatea-aio, Tamatea-whakapau. Three consecutive nights around the first quarter, all rated unfavourable. The traditional guidance is clear: unsettled weather, disrupted energy, avoid the ocean, don't start new work.</p>
+
+<p>Why three nights in a row? Why is this transition zone so consistently difficult?</p>
+
+<p>The first quarter moon marks the shift from spring tide to neap tide. During spring tides, the sun and moon's gravity pulls in the same direction, combining forces. At the quarter moon, they're at right angles to each other, and the sun's pull partially cancels out the moon's. The tidal range shrinks. But this transition doesn't happen instantly. It plays out over several days. Tidal patterns become less predictable. Ocean currents that were running consistently shift direction. Atmospheric pressure patterns that were stable during the spring tide begin to wobble.</p>
+
+<p>The name <em>Tamatea-whakapau</em>, "Tamatea who exhausts completely," captures the feeling precisely. The old pattern has spent itself. The new one hasn't established. There's a gap, and in that gap, conditions are unreliable.</p>
+
+<p>A modern meteorologist wouldn't phrase it as "Tamatea is ascendant." But if you asked them whether the first quarter moon transition correlates with less predictable weather, they'd acknowledge that atmospheric tidal effects are real, even if their magnitude relative to other weather drivers is debated.</p>
+
+<p>The Māramataka doesn't need the debate resolved. It has the data: <em>over many generations, these three nights produced bad outcomes. Don't fish. Don't plant. Wait.</em></p>
+
+<h2>Korekore — The Void</h2>
+
+<p>Three nights that translate to "nothingness." <em>Korekore-te-whiwhia</em>, nothing is obtained. <em>Korekore-te-rawea</em>, nothing to delight in. <em>Korekore-piri-ki-Tangaroa</em>, drawing near to Tangaroa.</p>
+
+<p>These fall around the last quarter, another neap tide transition, the mirror image of Tamatea. But where Tamatea is characterised as disruptive (active negative energy), Korekore is characterised as empty (absence of energy). The distinction matters.</p>
+
+<p>During Korekore, the tidal range is minimal. Water movement is slack. Fish aren't being pushed into feeding patterns by current. The ocean is quiet in a way that doesn't serve the fisher. The garden is in a holding pattern. The weather is flat.</p>
+
+<p>The Māramataka's response is acceptance. These are nights for rest, storytelling, wānanga (learning), and spiritual practice. The system tells you when to work, and it tells you when to stop. It gives that stopping a purpose.</p>
+
+<p>Then comes night 22, Tangaroa-ā-mua, and the energy returns like a door opening. The tidal cycle picks up again. Fish appear. The name says it all: Tangaroa is present again.</p>
+
+<div class="separator">· · ·</div>
+
+<h2>What Kind of Science Is This?</h2>
+
+<p>The Māramataka is the <em>result</em> of testing, carried out over a timeframe and at a scale that no modern study has matched.</p>
+
+<p>Consider what it takes to build a system like this. You need:</p>
+
+<p><strong>Consistent observation</strong>: not by one person, but by a community, across many locations, over many generations. A single fisher noticing that Rākaunui is a good night is anecdote. A thousand fishers across two hundred years all confirming it is data.</p>
+
+<p><strong>Transmission</strong>: a way to pass the knowledge forward. The night names themselves are a mnemonic technology. "Tangaroa-ā-mua" doesn't mean "first night of the neap-to-spring tidal transition." It means "the first face of the sea god." That image is easier to teach a child, easier to remember in the dark on a canoe, and just as accurate in practice.</p>
+
+<p><strong>Falsification</strong>: the willingness to discard what doesn't work. Plenty of lunar traditions around the world are vague or contradictory. The Māramataka's specificity (<em>this</em> night is good, <em>that</em> night is bad, <em>these three</em> are void) suggests a system that was ruthlessly edited over time. Nights that didn't consistently predict outcomes would have been downgraded. Nights that consistently delivered would have been reinforced.</p>
+
+<p>This is empiricism. It looks like a canoe, not a lab. But the process (observe, record, transmit, correct) is the same.</p>
+
+<div class="pullquote">
+  <p>The Māramataka is a record of what happens under the moon.</p>
+</div>
+
+<h2>Relational, Not Universal</h2>
+
+<p>One more thing that makes the Māramataka remarkable as a knowledge system: it is explicitly relational.</p>
+
+<p>The Māramataka varies between iwi and between regions. Coastal communities emphasise fishing nights. Inland communities weight planting guidance more heavily. Communities in the north, where kūmara grows well, have different agricultural markers than communities in the south, where cold-weather crops and forest foods dominate.</p>
+
+<p>This is a feature.</p>
+
+<p>A universal calendar tells you what day it is. A relational calendar tells you what's happening: <em>here, on this land, for these people, in this season.</em> The Māramataka doesn't impose a template on the land. It emerges from the relationship with it.</p>
+
+<p>This is why the Māramataka can travel. If you live in San Antonio, Texas, or London, or Sāmoa, the lunar nights still cycle through the same thirty names. The moon is universal. But what you do on those nights (what you plant, what you fish, what you gather) is determined by your land, your latitude, your seasons, your ecology.</p>
+
+<p>The framework travels. The content is local. That's the design.</p>
+
+<p>In San Antonio, the cicadas are one of those signs. When they start singing early in the year, you're in for a long, hot summer. When they hold off, summer will be shorter. Nobody published that in a journal. Generations of people just lived through enough Texas summers to know.</p>
+
+<p>That's a tohu. Same logic, different land.</p>
+
+<div class="separator">· · ·</div>
+
+<h2>Why This Matters Now</h2>
+
+<p>We live in an era of disconnection from natural cycles. Electric light erased the moon. Supermarkets erased the seasons. Most people alive today couldn't tell you what phase the moon is in, or what's in season where they live.</p>
+
+<p>The Māramataka is a practical tool for paying attention.</p>
+
+<p>Paying attention to the moon means stepping outside at night and looking up. Paying attention to the season means noticing what's growing, what's flowering, what's migrating through.</p>
+
+<p>Paying attention to the tohu, the signs, means being in relationship with the land you actually stand on.</p>
+
+<p>The Māramataka's thirty named nights are an invitation to that attention. They've been tested longer than any system you'll find in a peer-reviewed journal. And they still work, because the moon hasn't changed, the tides haven't changed, and fish still feed the way they always have.</p>
+
+<p>Go outside, look up, and start noticing.</p>
+
+<div class="end-mark">✦</div>
+
+</article>
+
+<section class="references">
+  <h2>Sources and further reading</h2>
+
+  <h3>On the Māramataka</h3>
+  <ol>
+    <li>Mātāmua, R. (2017). <em>Matariki: Te Whetū Tapu o te Tau</em>. Huia Publishers. The foundational text on Matariki and Māori astronomy by Professor Rangi Mātāmua (Tūhoe), drawing from extensive interviews with tohunga and traditional experts. English edition: <em>Matariki: The Star of the Year</em> (2020). <a href="https://huia.co.nz/products/matariki-the-star-of-the-year/" target="_blank">huia.co.nz</a></li>
+    <li>Roberts, M., Weko, F., &amp; Clarke, L. (2006). <em>Maramataka: the Maori Moon Calendar</em>. Agribusiness and Economics Research Unit, Research Report No. 283, Lincoln University. Identifies 44 maramataka variants, predominantly from Kahungunu and Whanganui iwi, and analyses the origin and grouping of moon night names. <a href="https://researcharchive.lincoln.ac.nz/handle/10182/155" target="_blank">researcharchive.lincoln.ac.nz</a></li>
+    <li>Te Ara: Encyclopedia of New Zealand. "Maramataka, the lunar calendar." A publicly accessible overview of regional variations in the Māramataka across Aotearoa. <a href="https://teara.govt.nz/en/maramataka-the-lunar-calendar" target="_blank">teara.govt.nz</a></li>
+  </ol>
+
+  <h3>Tides and gravitational forces</h3>
+  <ol>
+    <li>NOAA National Ocean Service. "Tidal Variations: The Influence of Position and Distance." Explains the mechanics of spring tides (sun-moon alignment at new and full moon) and neap tides (right-angle positioning at quarter moons), including perigee/apogee effects on tidal range. The core physics behind why the Māramataka's fishing and planting guidance works. <a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides06_variations.html" target="_blank">oceanservice.noaa.gov</a></li>
+    <li>Sumich, J.L. (1996). <em>An Introduction to the Biology of Marine Life</em>. 6th edition. Wm. C. Brown Publishers. Standard marine biology textbook cited by NOAA for tidal cycle mechanics and their biological effects.</li>
+    <li>Thurman, H.V. (1994). <em>Introductory Oceanography</em>. 7th edition. Macmillan. Covers the relationship between elliptical orbits, gravitational forces, and tidal variation.</li>
+  </ol>
+
+  <h3>Lunar cycles and marine biology</h3>
+  <ol>
+    <li>NIWA (National Institute of Water and Atmospheric Research). "Kina" (taonga species profile). Documents the biology and reproductive cycle of <em>Evechinus chloroticus</em>, including seasonal gonad development. <a href="https://niwa.co.nz/taonga-species/taonga-species-series/kina" target="_blank">niwa.co.nz</a></li>
+    <li>Barker, M.F. et al. (2007). "The effects of season, temperature and initial gonad condition on roe enhancement of the sea urchin <em>Evechinus chloroticus</em>." <em>Aquaculture</em>, 270(1-4). Confirms seasonal and environmental drivers of kina gonad quality. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0044848607002396" target="_blank">sciencedirect.com</a></li>
+    <li>Takemura, A., Rahman, M.S., &amp; Park, Y.J. (2010). "External and internal controls of lunar-related reproductive rhythms in fishes." <em>Journal of Fish Biology</em>, 76(1). Documents how lunar cycles synchronise spawning and feeding behaviour across marine species.</li>
+  </ol>
+
+  <h3>Eel migration</h3>
+  <ol>
+    <li>Jellyman, D.J. &amp; Tsukamoto, K. (2019). "Reexamination of the spawning migration of <em>Anguilla dieffenbachii</em> in relation to water temperature and the lunar cycle." <em>New Zealand Journal of Marine and Freshwater Research</em>. Confirms that New Zealand longfin eels migrate during dark moon phases, with nighttime swimming depth tracking the lunar cycle. <a href="https://www.tandfonline.com/doi/full/10.1080/00288330.2019.1614075" target="_blank">tandfonline.com</a></li>
+    <li>Aoyama, J. (2020). "Ecology and evolution of migration in the freshwater eels of the genus <em>Anguilla</em>." <em>Reviews in Fish Biology and Fisheries</em>. Comprehensive review of migration triggers across all <em>Anguilla</em> species, including lunar phase, rainfall, and photoperiod. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7553983/" target="_blank">pmc.ncbi.nlm.nih.gov</a></li>
+  </ol>
+
+  <h3>Lunar planting</h3>
+  <ol>
+    <li>Kolisko, L. (1936). <em>The Moon and the Growth of Plants</em>. One of the earliest systematic attempts to document lunar influence on seed germination and plant growth.</li>
+    <li>Thun, M. (various editions). <em>The Biodynamic Sowing and Planting Calendar</em>. Decades of European lunar planting data, developed independently of the Māramataka, arriving at similar conclusions about favourable and unfavourable planting phases.</li>
+    <li>Fretz, T.A. (1994). "Lunar effect on seed germination and seedling growth." <em>Biological Agriculture &amp; Horticulture</em>, 11(1-4). One of the few peer-reviewed studies observing measurable (if modest) differences in germination rates between lunar phases.</li>
+  </ol>
+
+  <h3>Traditional ecological knowledge</h3>
+  <ol>
+    <li>Texas Highways. "Where Cicadas Go, So Too Go the Sounds of Summer in Texas." Documents the relationship between cicada emergence timing and summer heat patterns across Texas. <a href="https://texashighways.com/outdoors/where-cicadas-go-so-too-go-the-sounds-of-summer-in-texas/" target="_blank">texashighways.com</a></li>
+    <li>Berkes, F. (2012). <em>Sacred Ecology: Traditional Ecological Knowledge and Resource Management</em>. 3rd edition. Routledge. The standard academic text on how Indigenous and local communities worldwide build empirical knowledge systems through sustained observation.</li>
+  </ol>
+
+  <p class="ref-note">This list isn't exhaustive. The Māramataka's knowledge base spans hundreds of years of oral tradition that predates any written source. Published research confirms specific mechanisms, but the observations themselves came first.</p>
+</section>
+
+<footer>
+  <p>Aroha's Atelier — Indigenous Reconnection</p>
+  <p class="footer-disclaimer">The Māramataka varies between iwi and regions across Aotearoa. This article draws from widely shared traditions and publicly documented observations. Consult your own iwi and hapū knowledge alongside any written resource.</p>
+</footer>
+
+</body>
+</html>

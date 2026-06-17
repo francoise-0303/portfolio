@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aroha's Atelier — Indigenous Reconnection</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .home-content {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    .home-intro {
+      font-size: 0.95rem;
+      color: var(--text-body);
+      line-height: 1.8;
+      margin-bottom: 3rem;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .home-card {
+      background: var(--deep-blue);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.8rem 1.5rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: block;
+    }
+
+    .home-card:hover {
+      border-color: var(--accent-teal);
+      transform: translateY(-2px);
+    }
+
+    .home-card .card-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent-teal);
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+
+    .home-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--star-white);
+      margin-bottom: 0.5rem;
+    }
+
+    .home-card p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .home-card.accent-gold:hover { border-color: var(--star-gold); }
+    .home-card.accent-gold .card-label { color: var(--star-gold); }
+    .home-card.accent-warm:hover { border-color: var(--accent-warm); }
+    .home-card.accent-warm .card-label { color: var(--accent-warm); }
+
+    @media (max-width: 600px) {
+      .home-grid { grid-template-columns: 1fr; }
+      .page-header h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="index.html" class="brand">Aroha's Atelier</a>
+    <ul class="nav-links">
+      <li><a href="maramataka.html">Te Māramataka</a></li>
+      <li><a href="maramataka-local.html">Your Land</a></li>
+      <li><a href="star-journey.html">Ngā Whetū</a></li>
+      <li><a href="the-science-of-the-maramataka.html">The Science</a></li>
+    </ul>
+  </nav>
+
+  <header class="page-header">
+    <h1>Indigenous Reconnection</h1>
+    <p class="subtitle">Learning to read the sky, the land, and the seasons again</p>
+  </header>
+
+  <div class="home-content">
+    <p class="home-intro">The Māramataka is the Māori lunar calendar. It connects the phases of the moon and the rising of stars to the planting cycles, fishing seasons, and daily rhythms of life in Aotearoa. These pages are a starting point for reconnection: with the sky above you and the land beneath your feet.</p>
+
+    <div class="home-grid">
+      <a href="maramataka.html" class="home-card">
+        <div class="card-label">Lunar Calendar</div>
+        <h2>Te Māramataka</h2>
+        <p>The 12 months, 29 lunar nights, star maps, and seasonal guidance. Click any month or night to see what it means.</p>
+      </a>
+
+      <a href="maramataka-local.html" class="home-card accent-warm">
+        <div class="card-label">Your Location</div>
+        <h2>Your Land</h2>
+        <p>The Māramataka adapted to where you are. The lunar nights stay the same. The stars and seasons shift with your land.</p>
+      </a>
+
+      <a href="star-journey.html" class="home-card accent-gold">
+        <div class="card-label">Seasonal Stars</div>
+        <h2>Ngā Whetū</h2>
+        <p>How the key Māori stars move across the sky through the twelve months. Matariki, Takurua, Rehua, Mahutonga, and more.</p>
+      </a>
+
+      <a href="the-science-of-the-maramataka.html" class="home-card">
+        <div class="card-label">Article</div>
+        <h2>The Science</h2>
+        <p>The gravitational, biological, and ecological science behind why the Māramataka works.</p>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Aroha's Atelier — Indigenous Reconnection</p>
+    <p class="footer-disclaimer">The Māramataka varies between iwi and regions across Aotearoa. These resources draw from widely shared traditions and should be used alongside your own iwi and hapū knowledge.</p>
+  </footer>
+</body>
+</html>

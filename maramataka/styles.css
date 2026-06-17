@@ -1,0 +1,486 @@
+/* ===================================================
+   Māramataka — Shared Styles
+   Aroha's Atelier · Indigenous Reconnection
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+
+:root {
+  --night: #0a0e1a;
+  --deep-blue: #0f1629;
+  --mid-blue: #1a2344;
+  --star-gold: #f0c850;
+  --star-white: #e8e4f0;
+  --moon-glow: #fffde8;
+  --text-primary: #d4d0e0;
+  --text-body: #b8b4c8;
+  --text-secondary: #8a86a0;
+  --accent-teal: #3db8a0;
+  --accent-warm: #c87040;
+  --border-subtle: rgba(255,255,255,0.08);
+  --good-day: #3db8a0;
+  --moderate-day: #d4a040;
+  --poor-day: #a05040;
+  --nav-height: 2.5rem;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--night);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ----- Site Navigation ----- */
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+  background: #040810;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: 'Inter', sans-serif;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  height: var(--nav-height);
+}
+
+.site-nav .brand {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--star-gold);
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.site-nav .brand:hover {
+  opacity: 1;
+}
+
+.site-nav .nav-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.site-nav .nav-links a {
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+  padding: 0.2rem 0;
+}
+
+.site-nav .nav-links a:hover {
+  color: var(--text-primary);
+}
+
+.site-nav .nav-links a.active {
+  color: var(--accent-teal);
+  border-bottom: 1px solid var(--accent-teal);
+}
+
+/* ----- Page Header ----- */
+
+.page-header {
+  text-align: center;
+  padding: 3rem 1.5rem 2rem;
+  background: linear-gradient(180deg, #060a14 0%, var(--night) 100%);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 400;
+  color: var(--star-white);
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  max-width: 700px;
+  margin: 0 auto 0.3rem;
+}
+
+.page-header .subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.page-header .deck {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+.page-header .byline {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+  font-weight: 300;
+}
+
+.page-header .note {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+  font-style: italic;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.7;
+}
+
+.page-header .hero-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent-teal);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+/* ----- Month Navigation ----- */
+
+nav.month-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  background: var(--deep-blue);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: var(--nav-height);
+  z-index: 100;
+}
+
+nav.month-nav button {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: center;
+}
+
+nav.month-nav button:hover {
+  border-color: var(--accent-teal);
+  color: var(--accent-teal);
+}
+
+nav.month-nav button.active {
+  background: var(--accent-teal);
+  border-color: var(--accent-teal);
+  color: var(--night);
+  font-weight: 500;
+}
+
+nav.month-nav button .nav-local {
+  display: block;
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-top: 1px;
+}
+
+/* ----- Main Content ----- */
+
+main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+.month-section { display: none; }
+.month-section.active { display: block; }
+
+/* ----- Month Header ----- */
+
+.month-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.month-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: var(--star-white);
+  margin-bottom: 0.3rem;
+}
+
+.month-header .gregorian {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+}
+
+.month-header .description {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  max-width: 600px;
+  margin: 0.8rem auto 0;
+  line-height: 1.7;
+}
+
+.month-header .whakataukī {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--star-gold);
+  margin-top: 1.2rem;
+  opacity: 0.85;
+}
+
+.month-header .whakataukī-translation {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.3rem;
+  font-style: italic;
+}
+
+/* ----- Tab Bar ----- */
+
+.tab-bar {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  padding: 0 1rem;
+  background: var(--deep-blue);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tab-bar button {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  padding: 0.8rem 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-bar button:hover { color: var(--text-primary); }
+
+.tab-bar button.active {
+  color: var(--star-gold);
+  border-bottom-color: var(--star-gold);
+  font-weight: 500;
+}
+
+.content-panel { display: none; }
+.content-panel.active { display: block; }
+
+/* ----- Star Map ----- */
+
+.star-map-container {
+  background: radial-gradient(ellipse at center, #0d1225 0%, #060a14 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.star-map-container h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--star-white);
+  margin-bottom: 1rem;
+  text-align: center;
+  font-weight: 400;
+}
+
+.star-map-container svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.star-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.star-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.star-legend-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* ----- Star Cards ----- */
+
+.stars-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.star-card {
+  background: var(--deep-blue);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+}
+
+.star-card .star-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--star-gold);
+  margin-bottom: 0.15rem;
+}
+
+.star-card .star-western {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.star-card .star-desc {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.star-card .star-visibility {
+  font-size: 0.72rem;
+  margin-top: 0.4rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.star-card .vis-yes { background: rgba(61,184,160,0.15); color: var(--good-day); }
+.star-card .vis-low { background: rgba(212,160,64,0.15); color: var(--moderate-day); }
+.star-card .vis-no { background: rgba(160,80,64,0.15); color: var(--poor-day); }
+
+/* ----- Activity Cards ----- */
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.activity-card {
+  background: var(--deep-blue);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.activity-card h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-teal);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.activity-card ul {
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.activity-card ul li {
+  padding: 0.2rem 0;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.activity-card ul li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--text-secondary);
+}
+
+/* ----- Quality Indicators ----- */
+
+.quality-good { background: var(--good-day); }
+.quality-moderate { background: var(--moderate-day); }
+.quality-poor { background: var(--poor-day); }
+
+/* ----- Footer ----- */
+
+footer {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+  max-width: 600px;
+  margin: 2rem auto 0;
+}
+
+footer p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+footer a {
+  color: var(--accent-teal);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+footer .footer-disclaimer {
+  font-size: 0.72rem;
+  opacity: 0.6;
+  margin-top: 1rem;
+}
+
+/* ----- Responsive ----- */
+
+@media (max-width: 600px) {
+  .page-header h1 { font-size: 2rem; }
+  .month-header h2 { font-size: 1.6rem; }
+  nav.month-nav button { font-size: 0.68rem; padding: 0.3rem 0.5rem; }
+  .activities-grid { grid-template-columns: 1fr; }
+  .stars-info { grid-template-columns: 1fr; }
+  .site-nav { padding: 0.6rem 1rem; }
+  .site-nav .nav-links { gap: 0.8rem; }
+}

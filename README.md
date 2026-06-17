@@ -7,7 +7,8 @@ A collection of self-contained web apps and live client sites I've built.
 ## Apps & tools
 | Project | What it does | Live |
 |---|---|---|
-| **Cyclical Time** | A circular, seasonal alternative to the linear calendar. | [open](./cyclical-time/) |
+| **Te Māramataka** | Interactive guide to the Māori lunar calendar (multi-page site). | [open](./maramataka/) |
+| **Cyclical Time** *(WIP)* | A circular, seasonal alternative to the linear calendar. | [open](./cyclical-time/) |
 | **The Mindful Maker Quiz** | Interactive archetype quiz for a fibre-arts brand. | [open](./mindful-maker-quiz/) |
 | **Meeting Task Approval** *(demo)* | Turns meeting notes into editable, selectable tasks. Sample data. | [open](./meeting-task-approval/) |
 | **Daily Slack Digest** *(demo)* | Turns noisy Slack threads into a prioritised morning briefing. Sample data. | [open](./slack-digest-demo/) |

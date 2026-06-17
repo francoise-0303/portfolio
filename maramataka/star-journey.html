@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ngā Whetū: Stars Across the Seasons | Māramataka</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .star-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .sky-dome {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      margin: 2rem auto;
+      aspect-ratio: 1;
+    }
+
+    .sky-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Gold accent overrides for this page's month-nav */
+    nav.month-nav button:hover {
+      border-color: var(--star-gold);
+      color: var(--star-gold);
+    }
+    nav.month-nav button.active {
+      background: rgba(240,200,80,0.12);
+      border-color: var(--star-gold);
+      color: var(--star-gold);
+      font-weight: 500;
+    }
+
+    /* Star info panel */
+    .star-info-panel {
+      text-align: center;
+      margin: 1.5rem auto;
+      max-width: 560px;
+      min-height: 120px;
+    }
+
+    .month-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--star-white);
+      margin-bottom: 0.15rem;
+    }
+
+    .month-season {
+      font-size: 0.82rem;
+      color: var(--accent-teal);
+      margin-bottom: 0.2rem;
+    }
+
+    .month-dates {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .visible-stars-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .visible-stars-list {
+      font-size: 0.85rem;
+      color: var(--text-body);
+      line-height: 1.7;
+    }
+
+    /* Hover tooltip */
+    .star-tooltip {
+      position: absolute;
+      background: rgba(15,22,41,0.95);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 0.8rem 1rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      max-width: 240px;
+      z-index: 10;
+      text-align: left;
+    }
+
+    .star-tooltip.visible { opacity: 1; }
+
+    .star-tooltip .tt-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--star-gold);
+      margin-bottom: 0.1rem;
+    }
+
+    .star-tooltip .tt-western {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+    }
+
+    .star-tooltip .tt-desc {
+      font-size: 0.78rem;
+      color: var(--text-body);
+      line-height: 1.5;
+    }
+
+    /* Playback */
+    .playback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin: 1rem 0 2rem;
+    }
+
+    .playback button {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .playback button:hover {
+      border-color: var(--star-gold);
+      color: var(--star-gold);
+    }
+
+    .play-btn.playing {
+      background: var(--star-gold);
+      border-color: var(--star-gold);
+      color: var(--night);
+    }
+
+    .speed-indicator {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      min-width: 2rem;
+      cursor: pointer;
+    }
+
+    /* Tab bar for this page */
+    .star-tab-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border-subtle);
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .star-tab-bar button {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      padding: 0.7rem 1.2rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+
+    .star-tab-bar button:hover {
+      color: var(--star-gold);
+    }
+
+    .star-tab-bar button.active {
+      color: var(--star-gold);
+      border-bottom-color: var(--star-gold);
+    }
+
+    .star-tab-panel {
+      display: none;
+    }
+
+    .star-tab-panel.active {
+      display: block;
+    }
+
+    /* Overview tab content */
+    .overview-month-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 2rem auto 1.5rem;
+    }
+
+    .overview-month-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--star-white);
+      margin-bottom: 0.15rem;
+    }
+
+    .overview-month-header .gregorian {
+      font-size: 0.82rem;
+      color: var(--accent-teal);
+      margin-bottom: 1rem;
+    }
+
+    .overview-month-header .description {
+      font-size: 0.88rem;
+      color: var(--text-body);
+      line-height: 1.75;
+      margin-bottom: 1rem;
+    }
+
+    .overview-month-header .whakatauki {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.92rem;
+      font-style: italic;
+      color: var(--star-gold);
+      opacity: 0.8;
+      margin-bottom: 0.3rem;
+    }
+
+    .overview-month-header .whakatauki-en {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 600px) {
+      .sky-dome { max-width: 340px; }
+      .month-title { font-size: 1.4rem; }
+      .star-tab-bar button { font-size: 0.7rem; padding: 0.6rem 0.8rem; }
+      .overview-month-header h2 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="index.html" class="brand">Aroha's Atelier</a>
+    <ul class="nav-links">
+      <li><a href="maramataka.html">Te Māramataka</a></li>
+      <li><a href="maramataka-local.html">Your Land</a></li>
+      <li><a href="star-journey.html" class="active">Ngā Whetū</a></li>
+      <li><a href="the-science-of-the-maramataka.html">The Science</a></li>
+    </ul>
+  </nav>
+
+  <header class="page-header">
+    <h1>Ngā Whetū</h1>
+    <p class="subtitle">How the stars shift across the twelve months of the Māramataka</p>
+  </header>
+
+  <nav class="month-nav" id="monthNav">
+    <button class="active" onclick="goTo(0)">Pipiri</button>
+    <button onclick="goTo(1)">Hōngongoi</button>
+    <button onclick="goTo(2)">Here-turi-kōkā</button>
+    <button onclick="goTo(3)">Mahuru</button>
+    <button onclick="goTo(4)">Whiringa-ā-nuku</button>
+    <button onclick="goTo(5)">Whiringa-ā-rangi</button>
+    <button onclick="goTo(6)">Hakihea</button>
+    <button onclick="goTo(7)">Kohītātea</button>
+    <button onclick="goTo(8)">Hui-tanguru</button>
+    <button onclick="goTo(9)">Poutū-te-rangi</button>
+    <button onclick="goTo(10)">Paenga-whāwhā</button>
+    <button onclick="goTo(11)">Haratua</button>
+  </nav>
+
+  <div class="star-tab-bar" id="starTabBar">
+    <button class="active" onclick="showStarTab('overview')">Overview &amp; Stars</button>
+    <button onclick="showStarTab('journey')">Star Journey</button>
+  </div>
+
+  <!-- Tab 1: Star Journey -->
+  <div class="star-tab-panel" data-tab="journey">
+    <div class="star-page">
+      <div class="sky-dome" id="skyDome">
+        <svg class="sky-svg" id="skySvg" viewBox="0 0 500 500"></svg>
+        <div class="star-tooltip" id="tooltip">
+          <div class="tt-name"></div>
+          <div class="tt-western"></div>
+          <div class="tt-desc"></div>
+        </div>
+      </div>
+
+      <div class="star-info-panel">
+        <div class="month-title" id="monthTitle">Pipiri</div>
+        <div class="month-season" id="monthSeason">Early Winter</div>
+        <div class="month-dates" id="monthDates">June / July</div>
+        <div class="visible-stars-label">Key stars</div>
+        <div class="visible-stars-list" id="starsList"></div>
+      </div>
+
+      <div class="playback">
+        <button class="step-btn" id="prevBtn" title="Previous month">&#9664;</button>
+        <button class="play-btn playing" id="playBtn" title="Play / Pause">&#9646;&#9646;</button>
+        <button class="step-btn" id="nextBtn" title="Next month">&#9654;</button>
+        <span class="speed-indicator" id="speedLabel" title="Click to change speed">3s</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Overview & Stars -->
+  <div class="star-tab-panel active" data-tab="overview">
+    <div class="star-page">
+      <div id="overviewContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Aroha's Atelier · Indigenous Reconnection</p>
+    <p class="footer-disclaimer">Star positions are approximate and simplified for illustration. Visibility varies with location and conditions.</p>
+  </footer>
+
+  <script>
+    const MONTHS = [
+      {name:"Pipiri",dates:"June / July",season:"Early Winter (Hōtoke)",stars:["Matariki","Puanga","Takurua","Tautoru","Atutahi","Mahutonga"],
+       desc:"The name Pipiri means ‘to draw together,’ and all things on earth draw close together for warmth. This is the beginning of the Māori new year, marked by the rising of Matariki. A time for remembrance and setting intentions.",
+       whakatauki:"Ka puta Matariki, ka rere Whānui, ko te tohu tēnā o te tau hou",
+       whakatauki_en:"When Matariki rises and Whānui trails, that's the sign of the new year",
+       activities:{planting:["Rest the earth, no major planting","Harvest remaining root crops","Gather firewood and prepare stores","Collect rongoā (medicinal plants) for winter"],fishing:["Inshore fishing continues on good lunar nights","Hīnaki (eel traps) set in rivers","Preserve fish by drying and smoking","Kereru (wood pigeon) season in some regions"],cultural:["Matariki celebrations and remembrance","Honour those who have passed","Set aspirations for the new year","Share kai, communal feasting"],seasonal:["Shortest days, conserve energy","Time for weaving, carving, storytelling","Strengthen whānau bonds","Plan for the seasons ahead"]}},
+      {name:"Hōngongoi",dates:"July / August",season:"Mid Winter (Hōtoke)",stars:["Matariki","Takurua","Tautoru","Rehua","Whānui","Mahutonga"],
+       desc:"Hōngongoi refers to the earth being very cold and hard. The winter deepens, but Matariki is now established in the sky, a reassurance that the cycle continues. Indoor arts flourish: weaving, carving, oral traditions, and fibre work.",
+       whakatauki:"He aha te mea nui o te ao? He tangata, he tangata, he tangata",
+       whakatauki_en:"What's the greatest thing in the world? It's people, it's people, it's people",
+       activities:{planting:["Earth is dormant, no planting","Maintain food stores","Gather winter greens where available","Prepare seed for spring planting"],fishing:["Tuna (eel) season continues","Fish on Tangaroa and Rākaunui nights","Set hīnaki in estuaries","Bird snaring in forests"],cultural:["Whare wānanga (houses of learning) active","Oral traditions passed down","Practice karakia and waiata","Strengthen community ties"],seasonal:["Coldest period, conserve warmth","Prime time for weaving and fibre arts","Carving and tool-making","Dream interpretation and spiritual work"]}},
+      {name:"Here-turi-kōkā",dates:"August / September",season:"Late Winter (Hōtoke)",stars:["Matariki","Rehua","Whakaahu","Whānui","Mahutonga"],
+       desc:"The name refers to vegetation beginning to spring up from the earth. Winter loosens its hold. The land stirs with early signs of renewal, a threshold month between cold and warmth.",
+       whakatauki:"Ahakoa he iti, he pounamu",
+       whakatauki_en:"Although it's small, it's precious (like greenstone)",
+       activities:{planting:["Early soil preparation begins","Clear garden plots","First tentative plantings on warm days","Gather early spring greens"],fishing:["Coastal fishing improves","Whitebait runs may begin","Continue tuna harvesting","Check bird snaring grounds"],cultural:["Prepare for spring ceremonies","Final winter wānanga sessions","Begin outdoor communal activities"],seasonal:["Days lengthening noticeably","Changeable weather, watch the sky","Transition from indoor to outdoor work","Energy of renewal building"]}},
+      {name:"Mahuru",dates:"September / October",season:"Early Spring (Koanga)",stars:["Rehua","Whānui","Mahutonga","Atutahi"],
+       desc:"The earth has now regained its warmth. Mahuru marks true spring. Life returns vigorously to the land. Birds begin nesting, trees blossom, gardens are prepared in earnest, and the bush fills with song.",
+       whakatauki:"Kia mau ki te aka matua, kei mau ki te aka tāepa",
+       whakatauki_en:"Cling to the main vine, not the loose one",
+       activities:{planting:["Kūmara planting begins (guided by Whānui)","Plant taro, hue (gourd), and uwhi (yam)","Gather spring greens and shoots","Forest gardens tended"],fishing:["Inanga (whitebait) runs peak","Coastal fishing active","Shellfish gathering resumes","Freshwater fisheries productive"],cultural:["Spring equinox ceremonies","Karakia for garden planting","Prepare for summer expeditions"],seasonal:["Days and nights equal length","Active outdoor work season begins","Energy and warmth increasing","Bird song fills the mornings"]}},
+      {name:"Whiringa-ā-nuku",dates:"October / November",season:"Mid Spring (Koanga)",stars:["Rehua","Mahutonga","Atutahi","Whānui"],
+       desc:"The earth has become quite warm. Whiringa-ā-nuku means the turning of the earth toward warmth. Garden planting is in full swing. The land is alive with growth and activity.",
+       whakatauki:"Mā te huruhuru ka rere te manu",
+       whakatauki_en:"With feathers, the bird can fly",
+       activities:{planting:["Main kūmara planting season","Tend growing crops","Gather berries and fruits ripening","Rongoā plants abundant"],fishing:["Open ocean fishing active","Shellfish plentiful at low tides","Net fishing in harbours","Rivers productive"],cultural:["Garden ceremonies and karakia","Begin preparations for summer gatherings","Maintain garden tapu protocols"],seasonal:["Long, warm days","Peak activity season","Travel between settlements","Abundance building"]}},
+      {name:"Whiringa-ā-rangi",dates:"November / December",season:"Late Spring (Koanga)",stars:["Rehua","Mahutonga","Atutahi","Takurua"],
+       desc:"The sun has reached its turning point upward. Whiringa-ā-rangi means the turning of the sky. The earth warms fully. Long days stretch toward the summer solstice. Gardens thrive and the ocean teems.",
+       whakatauki:"E kore e taea te whenu kotahi ki te raranga i te whāriki",
+       whakatauki_en:"The tapestry of understanding can't be woven by one strand alone",
+       activities:{planting:["Crops growing strongly, tend and weed","Harvest early-maturing plants","Berries, fruits abundant","Kaimoana gathering at its best"],fishing:["Deep sea fishing expeditions","Hāpuku and other reef fish","Crayfish season","Fish preservation for stores"],cultural:["Summer solstice approaching","Large gatherings and hui","Inter-hapū visits and trade"],seasonal:["Longest days of the year approaching","Maximum daylight for work","Warm enough for travel","Nights short but clear for star observation"]}},
+      {name:"Hakihea",dates:"December / January",season:"Early Summer (Raumati)",stars:["Rehua","Takurua","Tautoru","Atutahi","Mahutonga"],
+       desc:"Birds are now sitting on their eggs. Hakihea speaks to the peak of summer energy: the longest days, the warmest nights. The land is generous with food. This is the season of Raumati, full summer.",
+       whakatauki:"He manako te kōura i kore ai",
+       whakatauki_en:"Wishing for crayfish won’t bring them. You’ve got to go and get them.",
+       activities:{planting:["Crops in full growth","Harvest early kūmara varieties","Berries and fruits at peak","Gather harakeke (flax) for weaving"],fishing:["Peak ocean fishing season","Shark fishing expeditions","Kōura (crayfish) abundant","Kaimoana preservation"],cultural:["Summer solstice, longest day","Large inter-tribal gatherings","Trade and exchange between hapū","Celebrations and sports"],seasonal:["Peak summer warmth","Extended daylight for work and travel","Swimming and water activities","Abundance and plenty"]}},
+      {name:"Kohītātea",dates:"January / February",season:"Mid Summer (Raumati)",stars:["Takurua","Tautoru","Puanga","Atutahi","Whakaahu"],
+       desc:"Fruits are ripening. Kohītātea refers to the pale colour of maturing vegetation. Summer’s bounty is at its fullest. The harvest intensifies as crops reach maturity and the ocean provides generously.",
+       whakatauki:"Nāu te rourou, nāku te rourou, ka ora ai te iwi",
+       whakatauki_en:"With your food basket and my food basket, the people will thrive",
+       activities:{planting:["Main harvest season for kūmara","Preserve root crops for storage","Gather and dry berries","Karaka berries processed"],fishing:["Ocean fishing continues strongly","Net large catches for preservation","Dry and smoke fish for winter","Coastal foraging excellent"],cultural:["Harvest thanksgiving","Large hui and wānanga","Inter-tribal exchanges"],seasonal:["Days beginning to shorten slightly","Warmest temperatures","Focus on food preservation","Prepare stores for autumn and winter"]}},
+      {name:"Hui-tanguru",dates:"February / March",season:"Late Summer (Raumati)",stars:["Takurua","Tautoru","Atutahi","Mahutonga","Whakaahu"],
+       desc:"Summer crops are brought in. Hui-tanguru means the assembling together, a gathering in of the harvest. The season turns. Warmth lingers but the shift toward autumn is felt in the evening air.",
+       whakatauki:"He kai kei aku ringa",
+       whakatauki_en:"There's food at the end of my hands. I'm self-sufficient.",
+       activities:{planting:["Final harvest, clear remaining crops","Store kūmara in rua (storage pits)","Preserve and dry foods","Gather materials for winter crafts"],fishing:["Strong fishing continues","Intensive fish preservation","Shellfish gathering","Begin eel trapping preparation"],cultural:["Harvest completion ceremonies","Gratitude for the season’s bounty","Prepare for the quieter months"],seasonal:["Days shortening noticeably","Evening temperatures cooling","Autumn equinox approaching","Transition time, settle and prepare"]}},
+      {name:"Poutū-te-rangi",dates:"March / April",season:"Early Autumn (Ngahuru)",stars:["Mahutonga","Atutahi","Takurua","Rehua"],
+       desc:"Poutū-te-rangi (the pillar of the sky) refers to the autumn equinox, when day and night stand in balance. The earth begins its turn toward rest. Harvests are complete and the focus shifts to preservation and preparation.",
+       whakatauki:"Whāia te iti kahurangi; ki te tūohu koe, me he maunga teitei",
+       whakatauki_en:"Seek the treasure you value most; if you bow your head, let it be to a lofty mountain",
+       activities:{planting:["All crops now harvested and stored","Garden areas rested and cleared","Gather autumn foods (fungi, roots)","Collect seeds for next season"],fishing:["Tuna (eel) migration begins, prime trapping","Hīnaki set in rivers and lakes","Pātiki (flounder) season","Bird snaring preparations"],cultural:["Autumn equinox observance","Reflect on the year’s achievements","Begin preparations for winter rituals"],seasonal:["Days and nights in balance","Temperatures cooling steadily","Transition into indoor activities","A time of completion and gratitude"]}},
+      {name:"Paenga-whāwhā",dates:"April / May",season:"Mid Autumn (Ngahuru)",stars:["Mahutonga","Atutahi","Rehua","Whānui"],
+       desc:"All crops are now harvested and stored. Paenga-whāwhā refers to the dried stems and stalks left standing in the gardens after harvest. The landscape grows quieter. Preparation for winter intensifies.",
+       whakatauki:"Kia hora te marino, kia whakapapa pounamu te moana",
+       whakatauki_en:"May peace be widespread, may the sea glisten like greenstone",
+       activities:{planting:["Gardens fully at rest","Check and maintain food stores","Gather remaining wild foods","Collect firewood"],fishing:["Prime tuna (eel) season","Lamprey runs in some rivers","Kereru snaring begins","Preserve all catches for winter"],cultural:["Prepare for Matariki season ahead","Remembrance planning","Community preparations for winter"],seasonal:["Days noticeably shorter","First frosts in many regions","Autumn colours in the forests","Drawing inward, indoor life begins"]}},
+      {name:"Haratua",dates:"May / June",season:"Late Autumn (Ngahuru)",stars:["Whānui","Mahutonga","Takurua","Tautoru","Atutahi"],
+       desc:"The final month before the new year. Haratua is a time of anticipation and preparation. Winter approaches and food stores are checked as the community looks toward the rising of Matariki to begin the cycle anew.",
+       whakatauki:"E hara taku toa i te toa takitahi, engari he toa takitini",
+       whakatauki_en:"My strength isn't mine alone. It's the strength of many.",
+       activities:{planting:["Final firewood gathering","Check and reinforce food stores","Rongoā collection for winter medicines","Earth fully at rest"],fishing:["Late tuna runs","Coastal fishing on calm days","Final fish smoking and drying","Kereru season continues"],cultural:["Watch for Matariki’s heliacal rising","Prepare for new year celebrations","Remember those who have passed","Set intentions for the coming year"],seasonal:["Shortest days approaching","Cold settling in","Community draws close","Anticipation of Matariki, the cycle begins again"]}}
+    ];
+
+    const STARS = [
+      {id:"Matariki",western:"Pleiades",type:"cluster",desc:"The nine stars of Matariki rise in the pre-dawn sky during Pipiri, marking the Māori new year. Each star has a domain: Matariki (the mother), Pōhutukawa (the departed), Tupuānuku (food from earth), Tupuārangi (food from sky), Waipunāārangi (rain), Waitī (freshwater), Waitā (ocean), Ururangi (winds), and Hiwaiterangi (wishes and aspirations).",color:"#a8c8f0",size:4,
+       cx:180,cy:130,cluster:[[176,124],[184,126],[180,132],[174,130],[186,134],[178,138],[172,136]]},
+      {id:"Puanga",western:"Rigel",type:"star",desc:"For some iwi, Puanga rather than Matariki signals the new year. A brilliant blue-white light.",color:"#c0d8ff",size:3.5,cx:200,cy:175},
+      {id:"Takurua",western:"Sirius",type:"star",desc:"Brightest star in the night sky. Its name is also used for winter itself, te wā o Takurua.",color:"#ffffff",size:5,cx:245,cy:195},
+      {id:"Tautoru",western:"Orion's Belt",type:"asterism",desc:"Three stars in a row. A key navigational and seasonal marker, closely linked with Matariki and Puanga.",color:"#d0d8f0",size:2.5,cx:210,cy:180,
+       line:[[198,172],[210,180],[222,188]]},
+      {id:"Atutahi",western:"Canopus",type:"star",desc:"The solitary one, standing apart from other stars. An ariki (chief) and guardian, used to predict yearly abundance.",color:"#fff8d0",size:4.5,cx:310,cy:280},
+      {id:"Rehua",western:"Antares",type:"star",desc:"Star of summer and healing. Its reddish colour signals the approach of warmer months.",color:"#ff8060",size:4,cx:120,cy:260},
+      {id:"Mahutonga",western:"Southern Cross",type:"constellation",desc:"Essential navigation constellation. The vertical arm points toward the south celestial pole.",color:"#e0e8ff",size:3,cx:350,cy:340,
+       cross:[[350,310],[350,370],[330,340],[370,340]]},
+      {id:"Whānui",western:"Vega",type:"star",desc:"Its heliacal rising in early spring signals the time for planting kūmara, one of the most important agricultural markers.",color:"#d8e8ff",size:3.5,cx:100,cy:150},
+      {id:"Whakaahu",western:"Castor & Pollux",type:"pair",desc:"Twin stars used for navigation and timing of seasonal activities.",color:"#e8e0d0",size:2.8,cx:270,cy:140,pair:[[264,136],[276,144]]},
+      {id:"Te Ikaroa",western:"Milky Way",type:"band",desc:"The long fish, the great river of stars spanning the sky. Its angle indicates the season.",color:"rgba(200,210,240,0.06)",size:0,cx:250,cy:250}
+    ];
+
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const svg = document.getElementById('skySvg');
+    const tooltip = document.getElementById('tooltip');
+    const dome = document.getElementById('skyDome');
+    let currentMonth = 0;
+    let playing = true;
+    let timer = null;
+    let speed = 3000;
+    let activeTab = 'overview';
+
+    function showStarTab(tabName) {
+      activeTab = tabName;
+      document.querySelectorAll('#starTabBar button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#starTabBar button').forEach(b => {
+        if ((tabName === 'journey' && b.textContent === 'Star Journey') ||
+            (tabName === 'overview' && b.textContent.includes('Overview'))) {
+          b.classList.add('active');
+        }
+      });
+      document.querySelectorAll('.star-tab-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.querySelector(`.star-tab-panel[data-tab="${tabName}"]`);
+      if (panel) panel.classList.add('active');
+
+      if (tabName === 'overview') {
+        renderOverview(currentMonth);
+      }
+    }
+
+    function renderOverview(idx) {
+      const month = MONTHS[idx];
+      const visible = new Set(month.stars);
+      const visibleStars = STARS.filter(s => s.type !== 'band' && visible.has(s.id));
+
+      let html = `<div class="overview-month-header">
+        <h2>${month.name}</h2>
+        <p class="gregorian">${month.dates} · ${month.season}</p>
+        <p class="description">${month.desc}</p>
+        <p class="whakatauki">"${month.whakatauki}"</p>
+        <p class="whakatauki-en">${month.whakatauki_en}</p>
+      </div>`;
+
+      html += '<div class="stars-info">';
+      visibleStars.forEach(star => {
+        html += `<div class="star-card">
+          <div class="star-name">${star.id}</div>
+          <div class="star-western">${star.western}</div>
+          <div class="star-desc">${star.desc}</div>
+        </div>`;
+      });
+      html += '</div>';
+
+      if (month.activities) {
+        const a = month.activities;
+        html += '<div class="activities-grid" style="margin-top:2rem">';
+        html += activityCard('Planting & Gathering', a.planting);
+        html += activityCard('Fishing & Hunting', a.fishing);
+        html += activityCard('Cultural Observances', a.cultural);
+        html += activityCard('Seasonal Notes', a.seasonal);
+        html += '</div>';
+      }
+
+      document.getElementById('overviewContent').innerHTML = html;
+    }
+
+    function activityCard(title, items) {
+      if (!items || !items.length) return '';
+      return `<div class="activity-card"><h4>${title}</h4><ul>${items.map(i => `<li>${i}</li>`).join('')}</ul></div>`;
+    }
+
+    function buildSky() {
+      const defs = document.createElementNS(SVG_NS, 'defs');
+
+      const skyGrad = document.createElementNS(SVG_NS, 'radialGradient');
+      skyGrad.id = 'skyGrad';
+      skyGrad.setAttribute('cx', '50%');
+      skyGrad.setAttribute('cy', '50%');
+      const s1 = document.createElementNS(SVG_NS, 'stop');
+      s1.setAttribute('offset', '0%');
+      s1.setAttribute('stop-color', '#0d1225');
+      const s2 = document.createElementNS(SVG_NS, 'stop');
+      s2.setAttribute('offset', '100%');
+      s2.setAttribute('stop-color', '#060a14');
+      skyGrad.append(s1, s2);
+
+      const glow = document.createElementNS(SVG_NS, 'filter');
+      glow.id = 'starGlow';
+      const blur = document.createElementNS(SVG_NS, 'feGaussianBlur');
+      blur.setAttribute('stdDeviation', '2.5');
+      blur.setAttribute('result', 'blur');
+      const merge = document.createElementNS(SVG_NS, 'feMerge');
+      const mn1 = document.createElementNS(SVG_NS, 'feMergeNode');
+      mn1.setAttribute('in', 'blur');
+      const mn2 = document.createElementNS(SVG_NS, 'feMergeNode');
+      mn2.setAttribute('in', 'SourceGraphic');
+      merge.append(mn1, mn2);
+      glow.append(blur, merge);
+
+      defs.append(skyGrad, glow);
+      svg.appendChild(defs);
+
+      const bg = document.createElementNS(SVG_NS, 'circle');
+      bg.setAttribute('cx', '250');
+      bg.setAttribute('cy', '250');
+      bg.setAttribute('r', '240');
+      bg.setAttribute('fill', 'url(#skyGrad)');
+      bg.setAttribute('stroke', 'rgba(255,255,255,0.06)');
+      bg.setAttribute('stroke-width', '1');
+      svg.appendChild(bg);
+
+      const mw = document.createElementNS(SVG_NS, 'ellipse');
+      mw.id = 'milkyWay';
+      mw.setAttribute('cx', '250');
+      mw.setAttribute('cy', '250');
+      mw.setAttribute('rx', '220');
+      mw.setAttribute('ry', '50');
+      mw.setAttribute('fill', 'rgba(180,190,220,0.04)');
+      mw.setAttribute('transform', 'rotate(-30 250 250)');
+      svg.appendChild(mw);
+
+      const scatter = document.createElementNS(SVG_NS, 'g');
+      scatter.setAttribute('opacity', '0.3');
+      const rng = mulberry32(42);
+      for (let i = 0; i < 120; i++) {
+        const angle = rng() * Math.PI * 2;
+        const dist = rng() * 230;
+        const sx = 250 + Math.cos(angle) * dist;
+        const sy = 250 + Math.sin(angle) * dist;
+        if (Math.hypot(sx - 250, sy - 250) > 238) continue;
+        const dot = document.createElementNS(SVG_NS, 'circle');
+        dot.setAttribute('cx', sx.toFixed(1));
+        dot.setAttribute('cy', sy.toFixed(1));
+        dot.setAttribute('r', (rng() * 1.2 + 0.3).toFixed(1));
+        dot.setAttribute('fill', '#c8d0e8');
+        dot.setAttribute('opacity', (rng() * 0.5 + 0.2).toFixed(2));
+        scatter.appendChild(dot);
+      }
+      svg.appendChild(scatter);
+
+      const hz = document.createElementNS(SVG_NS, 'text');
+      hz.setAttribute('x', '250');
+      hz.setAttribute('y', '498');
+      hz.setAttribute('text-anchor', 'middle');
+      hz.setAttribute('font-family', 'Inter, sans-serif');
+      hz.setAttribute('font-size', '9');
+      hz.setAttribute('fill', 'rgba(255,255,255,0.15)');
+      hz.setAttribute('letter-spacing', '0.2em');
+      hz.textContent = 'SOUTH';
+      svg.appendChild(hz);
+
+      const hn = document.createElementNS(SVG_NS, 'text');
+      hn.setAttribute('x', '250');
+      hn.setAttribute('y', '18');
+      hn.setAttribute('text-anchor', 'middle');
+      hn.setAttribute('font-family', 'Inter, sans-serif');
+      hn.setAttribute('font-size', '9');
+      hn.setAttribute('fill', 'rgba(255,255,255,0.15)');
+      hn.setAttribute('letter-spacing', '0.2em');
+      hn.textContent = 'NORTH';
+      svg.appendChild(hn);
+
+      STARS.forEach(star => {
+        if (star.type === 'band') return;
+
+        const g = document.createElementNS(SVG_NS, 'g');
+        g.id = 'star-' + star.id;
+        g.setAttribute('opacity', '0.15');
+        g.style.transition = 'opacity 0.8s ease';
+        g.style.cursor = 'pointer';
+
+        if (star.cluster) {
+          star.cluster.forEach(([px, py]) => {
+            const c = document.createElementNS(SVG_NS, 'circle');
+            c.setAttribute('cx', px);
+            c.setAttribute('cy', py);
+            c.setAttribute('r', '2.5');
+            c.setAttribute('fill', star.color);
+            c.setAttribute('filter', 'url(#starGlow)');
+            g.appendChild(c);
+          });
+        } else if (star.line) {
+          const ln = document.createElementNS(SVG_NS, 'line');
+          ln.setAttribute('x1', star.line[0][0]);
+          ln.setAttribute('y1', star.line[0][1]);
+          ln.setAttribute('x2', star.line[2][0]);
+          ln.setAttribute('y2', star.line[2][1]);
+          ln.setAttribute('stroke', star.color);
+          ln.setAttribute('stroke-width', '0.5');
+          ln.setAttribute('opacity', '0.4');
+          g.appendChild(ln);
+          star.line.forEach(([px, py]) => {
+            const c = document.createElementNS(SVG_NS, 'circle');
+            c.setAttribute('cx', px);
+            c.setAttribute('cy', py);
+            c.setAttribute('r', star.size);
+            c.setAttribute('fill', star.color);
+            c.setAttribute('filter', 'url(#starGlow)');
+            g.appendChild(c);
+          });
+        } else if (star.cross) {
+          const v = document.createElementNS(SVG_NS, 'line');
+          v.setAttribute('x1', star.cross[0][0]);
+          v.setAttribute('y1', star.cross[0][1]);
+          v.setAttribute('x2', star.cross[1][0]);
+          v.setAttribute('y2', star.cross[1][1]);
+          v.setAttribute('stroke', star.color);
+          v.setAttribute('stroke-width', '0.5');
+          v.setAttribute('opacity', '0.4');
+          g.appendChild(v);
+          const h = document.createElementNS(SVG_NS, 'line');
+          h.setAttribute('x1', star.cross[2][0]);
+          h.setAttribute('y1', star.cross[2][1]);
+          h.setAttribute('x2', star.cross[3][0]);
+          h.setAttribute('y2', star.cross[3][1]);
+          h.setAttribute('stroke', star.color);
+          h.setAttribute('stroke-width', '0.5');
+          h.setAttribute('opacity', '0.4');
+          g.appendChild(h);
+          star.cross.forEach(([px, py]) => {
+            const c = document.createElementNS(SVG_NS, 'circle');
+            c.setAttribute('cx', px);
+            c.setAttribute('cy', py);
+            c.setAttribute('r', star.size);
+            c.setAttribute('fill', star.color);
+            c.setAttribute('filter', 'url(#starGlow)');
+            g.appendChild(c);
+          });
+        } else if (star.pair) {
+          star.pair.forEach(([px, py]) => {
+            const c = document.createElementNS(SVG_NS, 'circle');
+            c.setAttribute('cx', px);
+            c.setAttribute('cy', py);
+            c.setAttribute('r', star.size);
+            c.setAttribute('fill', star.color);
+            c.setAttribute('filter', 'url(#starGlow)');
+            g.appendChild(c);
+          });
+        } else {
+          const c = document.createElementNS(SVG_NS, 'circle');
+          c.setAttribute('cx', star.cx);
+          c.setAttribute('cy', star.cy);
+          c.setAttribute('r', star.size);
+          c.setAttribute('fill', star.color);
+          c.setAttribute('filter', 'url(#starGlow)');
+          g.appendChild(c);
+        }
+
+        const label = document.createElementNS(SVG_NS, 'text');
+        label.setAttribute('x', star.cx);
+        label.setAttribute('y', star.cy - star.size * 2 - 6);
+        label.setAttribute('text-anchor', 'middle');
+        label.setAttribute('font-family', 'Playfair Display, serif');
+        label.setAttribute('font-size', '11');
+        label.setAttribute('fill', star.color);
+        label.setAttribute('opacity', '0.85');
+        label.textContent = star.id;
+        g.appendChild(label);
+
+        g.addEventListener('mouseenter', (e) => showTooltip(star, e));
+        g.addEventListener('mouseleave', hideTooltip);
+
+        svg.appendChild(g);
+      });
+    }
+
+    function showTooltip(star, e) {
+      const rect = dome.getBoundingClientRect();
+      const svgRect = svg.getBoundingClientRect();
+      const scaleX = svgRect.width / 500;
+      const x = star.cx * scaleX + svgRect.left - rect.left;
+      const y = star.cy * scaleX + svgRect.top - rect.top;
+
+      tooltip.querySelector('.tt-name').textContent = star.id;
+      tooltip.querySelector('.tt-western').textContent = star.western;
+      tooltip.querySelector('.tt-desc').textContent = star.desc;
+      tooltip.style.left = Math.min(x + 15, rect.width - 260) + 'px';
+      tooltip.style.top = (y - 20) + 'px';
+      tooltip.classList.add('visible');
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove('visible');
+    }
+
+    function renderMonth(idx) {
+      const month = MONTHS[idx];
+      const visible = new Set(month.stars);
+
+      STARS.forEach(star => {
+        if (star.type === 'band') return;
+        const el = document.getElementById('star-' + star.id);
+        if (!el) return;
+        el.setAttribute('opacity', visible.has(star.id) ? '1' : '0.12');
+      });
+
+      document.getElementById('monthTitle').textContent = month.name;
+      document.getElementById('monthSeason').textContent = month.season;
+      document.getElementById('monthDates').textContent = month.dates;
+      document.getElementById('starsList').textContent = month.stars.join(' · ');
+
+      document.querySelectorAll('#monthNav button').forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+      });
+
+      if (activeTab === 'overview') {
+        renderOverview(idx);
+      }
+    }
+
+    function mulberry32(a) {
+      return function() {
+        a |= 0; a = a + 0x6D2B79F5 | 0;
+        var t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+    }
+
+    function goTo(idx) {
+      currentMonth = idx;
+      renderMonth(currentMonth);
+    }
+
+    function nextMonth() {
+      currentMonth = (currentMonth + 1) % 12;
+      renderMonth(currentMonth);
+    }
+
+    function prevMonth() {
+      currentMonth = (currentMonth - 1 + 12) % 12;
+      renderMonth(currentMonth);
+    }
+
+    function startPlay() {
+      if (timer) clearInterval(timer);
+      timer = setInterval(nextMonth, speed);
+      playing = true;
+      document.getElementById('playBtn').classList.add('playing');
+      document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+    }
+
+    function stopPlay() {
+      if (timer) clearInterval(timer);
+      timer = null;
+      playing = false;
+      document.getElementById('playBtn').classList.remove('playing');
+      document.getElementById('playBtn').innerHTML = '&#9654;';
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+      playing ? stopPlay() : startPlay();
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => { stopPlay(); prevMonth(); });
+    document.getElementById('nextBtn').addEventListener('click', () => { stopPlay(); nextMonth(); });
+
+    document.getElementById('speedLabel').addEventListener('click', () => {
+      const speeds = [4000, 3000, 2000, 1200];
+      const labels = ['4s', '3s', '2s', '1.2s'];
+      let idx = speeds.indexOf(speed);
+      idx = (idx + 1) % speeds.length;
+      speed = speeds[idx];
+      document.getElementById('speedLabel').textContent = labels[idx];
+      if (playing) startPlay();
+    });
+
+    buildSky();
+    renderMonth(0);
+    startPlay();
+  </script>
+</body>
+</html>

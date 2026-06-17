@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Te Marama — The Lunar Cycle | Māramataka</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .moon-page {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 0;
+      text-align: center;
+    }
+
+    .moon-stage {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      margin: 2.5rem auto 2rem;
+    }
+
+    .moon-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 40px rgba(255, 253, 232, 0.12));
+      transition: filter 0.8s;
+    }
+
+    .moon-svg.full-glow {
+      filter: drop-shadow(0 0 60px rgba(255, 253, 232, 0.25));
+    }
+
+    .night-num-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .night-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--star-white);
+      margin-bottom: 0.25rem;
+      transition: color 0.5s;
+    }
+
+    .night-phase-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .night-quality-badge {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.25rem 1rem;
+      border-radius: 3px;
+      margin-bottom: 1.2rem;
+      font-weight: 500;
+    }
+
+    .q-favourable { background: rgba(61,184,160,0.15); color: var(--good-day); }
+    .q-moderate { background: rgba(212,160,64,0.15); color: var(--moderate-day); }
+    .q-unfavourable { background: rgba(160,80,64,0.15); color: var(--poor-day); }
+
+    .night-desc {
+      font-size: 0.88rem;
+      color: var(--text-body);
+      line-height: 1.75;
+      max-width: 500px;
+      margin: 0 auto 0.8rem;
+    }
+
+    .night-activities-text {
+      font-size: 0.8rem;
+      color: var(--accent-teal);
+      line-height: 1.6;
+      opacity: 0.8;
+    }
+
+    .night-avoid-text {
+      font-size: 0.78rem;
+      color: var(--poor-day);
+      line-height: 1.6;
+      opacity: 0.7;
+      margin-top: 0.3rem;
+    }
+
+    /* Timeline dots */
+    .cycle-timeline {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin: 2rem auto 1rem;
+      max-width: 550px;
+      flex-wrap: wrap;
+    }
+
+    .cycle-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 0;
+    }
+
+    .cycle-dot:hover {
+      border-color: var(--text-secondary);
+      transform: scale(1.3);
+    }
+
+    .cycle-dot.active {
+      background: var(--moon-glow);
+      border-color: var(--moon-glow);
+      box-shadow: 0 0 8px rgba(255,253,232,0.4);
+      transform: scale(1.4);
+    }
+
+    .cycle-dot.fav { border-color: rgba(61,184,160,0.4); }
+    .cycle-dot.mod { border-color: rgba(212,160,64,0.4); }
+    .cycle-dot.unf { border-color: rgba(160,80,64,0.4); }
+
+    /* Controls */
+    .playback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      margin: 1rem 0 2rem;
+    }
+
+    .playback button {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .playback button:hover {
+      border-color: var(--accent-teal);
+      color: var(--accent-teal);
+    }
+
+    .play-btn.playing {
+      background: var(--accent-teal);
+      border-color: var(--accent-teal);
+      color: var(--night);
+    }
+
+    .speed-indicator {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      min-width: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .moon-stage { width: 180px; height: 180px; }
+      .night-title { font-size: 1.7rem; }
+      .cycle-timeline { gap: 4px; }
+      .cycle-dot { width: 8px; height: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav">
+    <a href="maramataka.html" class="brand">Aroha's Atelier</a>
+    <ul class="nav-links">
+      <li><a href="maramataka.html">Te Māramataka</a></li>
+      <li><a href="maramataka-local.html">Your Land</a></li>
+      <li><a href="moon-phases.html" class="active">Te Marama</a></li>
+      <li><a href="star-journey.html">Ngā Whetū</a></li>
+      <li><a href="the-science-of-the-maramataka.html">The Science</a></li>
+    </ul>
+  </nav>
+
+  <header class="page-header">
+    <h1>Te Marama</h1>
+    <p class="subtitle">The 29 nights of the lunar cycle, from Whiro to Tireo</p>
+  </header>
+
+  <div class="moon-page">
+    <div class="moon-stage">
+      <svg class="moon-svg" id="moonSvg" viewBox="0 0 200 200">
+        <defs>
+          <radialGradient id="moonSurface" cx="38%" cy="35%">
+            <stop offset="0%" stop-color="#fffde8"/>
+            <stop offset="45%" stop-color="#ede5c4"/>
+            <stop offset="100%" stop-color="#d8d0a8"/>
+          </radialGradient>
+          <radialGradient id="crater" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="rgba(0,0,0,0.08)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0.01)"/>
+          </radialGradient>
+          <filter id="moonBlur">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.5"/>
+          </filter>
+          <clipPath id="disc">
+            <circle cx="100" cy="100" r="80"/>
+          </clipPath>
+        </defs>
+        <circle cx="100" cy="100" r="80" fill="url(#moonSurface)"/>
+        <g clip-path="url(#disc)" opacity="0.45">
+          <circle cx="68" cy="58" r="14" fill="url(#crater)"/>
+          <circle cx="125" cy="78" r="20" fill="url(#crater)"/>
+          <circle cx="82" cy="132" r="11" fill="url(#crater)"/>
+          <circle cx="134" cy="48" r="9" fill="url(#crater)"/>
+          <circle cx="56" cy="108" r="16" fill="url(#crater)"/>
+          <circle cx="145" cy="118" r="12" fill="url(#crater)"/>
+          <circle cx="100" cy="96" r="7" fill="url(#crater)"/>
+          <circle cx="75" cy="80" r="5" fill="url(#crater)"/>
+        </g>
+        <path id="shadow" d="" fill="rgba(10,14,26,0.94)" clip-path="url(#disc)" filter="url(#moonBlur)"/>
+        <circle cx="100" cy="100" r="81" fill="none" stroke="rgba(255,253,232,0.06)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <div class="night-num-label" id="numLabel">Night 1 of 29</div>
+    <div class="night-title" id="nightTitle">Whiro</div>
+    <div class="night-phase-label" id="phaseLabel">New Moon</div>
+    <div class="night-quality-badge" id="qualityBadge">Unfavourable</div>
+    <div class="night-desc" id="nightDesc"></div>
+    <div class="night-activities-text" id="activitiesText"></div>
+    <div class="night-avoid-text" id="avoidText"></div>
+
+    <div class="cycle-timeline" id="timeline"></div>
+
+    <div class="playback">
+      <button class="step-btn" id="prevBtn" title="Previous night">&#9664;</button>
+      <button class="play-btn playing" id="playBtn" title="Play / Pause">&#9654;</button>
+      <button class="step-btn" id="nextBtn" title="Next night">&#9654;</button>
+      <span class="speed-indicator" id="speedLabel">2s</span>
+    </div>
+  </div>
+
+  <footer>
+    <p>Aroha's Atelier &mdash; Indigenous Reconnection</p>
+    <p class="footer-disclaimer">The Māramataka varies between iwi and regions across Aotearoa.</p>
+  </footer>
+
+  <script>
+    const NIGHTS = [
+      {name:"Whiro",phase:"New Moon",quality:"Unfavourable",meaning:"The new moon appears. A day of darkness associated with Whiro, the embodiment of evil and misfortune. Rest.",activities:"Rest, spiritual reflection",avoid:"Planting, fishing, starting new ventures"},
+      {name:"Tirea",phase:"Waxing Crescent",quality:"Moderate",meaning:"The first sliver of light returns. Energy begins to build slowly.",activities:"Light preparation work, planning",avoid:"Major new undertakings"},
+      {name:"Hoata",phase:"Waxing Crescent",quality:"Favourable",meaning:"Light increases and warms. The name suggests gleaming or shining.",activities:"Fishing, beginning new work, light planting",avoid:""},
+      {name:"Ōue",phase:"Waxing Crescent",quality:"Favourable",meaning:"Favourable energy continues to build.",activities:"Ocean fishing, planting near-surface crops, gathering",avoid:""},
+      {name:"Okoro",phase:"Waxing Crescent",quality:"Favourable",meaning:"Energy is strong and positive. An excellent day.",activities:"Planting root crops, deep-sea fishing, all productive work",avoid:""},
+      {name:"Tamatea-āngana",phase:"First Quarter approaching",quality:"Unfavourable",meaning:"First of the Tamatea nights — associated with the atua Tamatea. Unsettled weather and energy.",activities:"Rest, indoor work",avoid:"The sea, important tasks, new ventures"},
+      {name:"Tamatea-aio",phase:"First Quarter",quality:"Moderate",meaning:"A calmer Tamatea night — aio means peaceful. The disruption eases.",activities:"Light tasks, cautious fishing",avoid:"Major decisions"},
+      {name:"Tamatea-whakapau",phase:"First Quarter",quality:"Unfavourable",meaning:"The last and most intense Tamatea night — whakapau means to exhaust completely.",activities:"Rest, spiritual reflection",avoid:"Ocean, planting, starting anything new"},
+      {name:"Huna",phase:"Waxing Gibbous",quality:"Moderate",meaning:"Things hidden are revealed. A transitional night.",activities:"Divination, seeking lost things, moderate tasks",avoid:""},
+      {name:"Ariki",phase:"Waxing Gibbous",quality:"Favourable",meaning:"The chiefly night — ariki means chief. Very favourable. High energy and good fortune.",activities:"All activities — planting, fishing, travel, ceremonies",avoid:""},
+      {name:"Hotu",phase:"Waxing Gibbous",quality:"Favourable",meaning:"Abundance and fruitfulness. Excellent conditions.",activities:"Planting, harvesting, ocean fishing, communal gatherings",avoid:""},
+      {name:"Māwharu",phase:"Waxing Gibbous",quality:"Favourable",meaning:"The moon is fattening, growing full. Good general conditions.",activities:"All productive work, fishing, planting above-ground crops",avoid:""},
+      {name:"Ōhua",phase:"Nearly Full",quality:"Moderate",meaning:"The moon is nearly full. Good energy but beginning to peak.",activities:"Fishing, gathering, preparation work",avoid:""},
+      {name:"Turu",phase:"Nearly Full",quality:"Favourable",meaning:"Standing firm — turu means a prop or support. Stable, reliable.",activities:"Planting, building, steady productive work",avoid:""},
+      {name:"Rākaunui",phase:"Full Moon",quality:"Favourable",meaning:"The full moon — rākau nui, the great tree. Most favourable night of the entire cycle.",activities:"All activities highly favoured — plant, fish, gather, celebrate",avoid:""},
+      {name:"Rākaumatohi",phase:"Full Moon (waning)",quality:"Favourable",meaning:"The night after full moon. Very favourable — energy of Rākaunui lingers.",activities:"Continue all good work from Rākaunui",avoid:""},
+      {name:"Takirau",phase:"Waning Gibbous",quality:"Favourable",meaning:"Good for fishing and ocean activities. Waning moon pulls water and draws fish.",activities:"Fishing (especially net fishing and diving), ocean activities",avoid:""},
+      {name:"Ōika",phase:"Waning Gibbous",quality:"Moderate",meaning:"Energy begins to diminish. Still workable but waning.",activities:"Moderate tasks, harvesting, indoor work",avoid:""},
+      {name:"Korekore-te-whiwhia",phase:"Last Quarter approaching",quality:"Unfavourable",meaning:"The void begins — korekore means nothingness. Te whiwhia: nothing is obtained.",activities:"Rest, reflection",avoid:"Starting new ventures, planting"},
+      {name:"Korekore-te-rawea",phase:"Last Quarter",quality:"Unfavourable",meaning:"The void continues. Te rawea: nothing to delight in.",activities:"Spiritual work, rest, storytelling, wānanga",avoid:"Planting, fishing"},
+      {name:"Korekore-piri-ki-Tangaroa",phase:"Last Quarter",quality:"Moderate",meaning:"Drawing near to Tangaroa (god of the sea). Ocean energy returns.",activities:"Preparation for fishing, mending nets, ocean observation",avoid:""},
+      {name:"Tangaroa-ā-mua",phase:"Waning Crescent",quality:"Favourable",meaning:"First night of Tangaroa — god of the sea ascendant.",activities:"Ocean fishing, river fishing, shellfish gathering",avoid:""},
+      {name:"Tangaroa-ā-roto",phase:"Waning Crescent",quality:"Favourable",meaning:"Tangaroa within — deep ocean energy. Very good for fishing.",activities:"Deep-sea fishing, diving, all ocean activities",avoid:""},
+      {name:"Tangaroa-kiokio",phase:"Waning Crescent",quality:"Favourable",meaning:"Last night of Tangaroa. Kiokio (a fern) unfurls — final opening of this energy.",activities:"Fishing, kaimoana gathering, water-related activities",avoid:""},
+      {name:"Ōtāne",phase:"Waning Crescent",quality:"Favourable",meaning:"Night of Tāne — god of forests, birds, and light.",activities:"Planting, forest gathering, bird work, land-based activities",avoid:""},
+      {name:"Ōrongonui",phase:"Waning Crescent",quality:"Favourable",meaning:"Great listening — ōrongo means to listen, nui means great.",activities:"Planting, decisions, community meetings, all productive work",avoid:""},
+      {name:"Mauri",phase:"Dark Moon",quality:"Moderate",meaning:"Life force — the mauri (essence) of the moon fades. Transitional.",activities:"Complete ongoing tasks, prepare for the new cycle",avoid:""},
+      {name:"Mutuwhenua",phase:"Dark Moon",quality:"Unfavourable",meaning:"The land is cut off — mutu (ended) whenua (land). The darkest night.",activities:"Rest, spiritual reflection",avoid:"Planting, fishing"},
+      {name:"Tireo",phase:"Dark Moon / New Moon eve",quality:"Unfavourable",meaning:"The looking — the moon watches for its own return. A liminal night between cycles.",activities:"Rest, contemplation, await the new moon",avoid:"Starting anything new"}
+    ];
+
+    const CX = 100, CY = 100, R = 80;
+
+    function moonShadowPath(n) {
+      const nightNum = n + 1;
+      let illum, waxing;
+
+      if (nightNum <= 15) {
+        illum = (nightNum - 1) / 14;
+        waxing = true;
+      } else {
+        illum = (29 - nightNum) / 14;
+        waxing = false;
+      }
+
+      if (illum >= 0.99) return '';
+      if (illum <= 0.01) {
+        return `M ${CX} ${CY-R} A ${R} ${R} 0 1 0 ${CX} ${CY+R} A ${R} ${R} 0 1 0 ${CX} ${CY-R} Z`;
+      }
+
+      const k = Math.cos(Math.PI * illum);
+      const tRx = Math.max(Math.abs(k) * R, 0.5);
+
+      if (waxing) {
+        const sw = k >= 0 ? 0 : 1;
+        return `M ${CX} ${CY-R} A ${R} ${R} 0 0 0 ${CX} ${CY+R} A ${tRx} ${R} 0 0 ${sw} ${CX} ${CY-R} Z`;
+      } else {
+        const sw = k >= 0 ? 1 : 0;
+        return `M ${CX} ${CY-R} A ${R} ${R} 0 0 1 ${CX} ${CY+R} A ${tRx} ${R} 0 0 ${sw} ${CX} ${CY-R} Z`;
+      }
+    }
+
+    let current = 0;
+    let playing = true;
+    let interval = null;
+    let speed = 2000;
+
+    const shadow = document.getElementById('shadow');
+    const moonSvg = document.getElementById('moonSvg');
+    const numLabel = document.getElementById('numLabel');
+    const nightTitle = document.getElementById('nightTitle');
+    const phaseLabel = document.getElementById('phaseLabel');
+    const qualityBadge = document.getElementById('qualityBadge');
+    const nightDesc = document.getElementById('nightDesc');
+    const activitiesText = document.getElementById('activitiesText');
+    const avoidText = document.getElementById('avoidText');
+    const timeline = document.getElementById('timeline');
+
+    // Build timeline dots
+    NIGHTS.forEach((n, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'cycle-dot';
+      const qClass = n.quality === 'Favourable' ? 'fav' : n.quality === 'Moderate' ? 'mod' : 'unf';
+      dot.classList.add(qClass);
+      dot.title = `${i+1}. ${n.name}`;
+      dot.addEventListener('click', () => goTo(i));
+      timeline.appendChild(dot);
+    });
+
+    function render(idx) {
+      const n = NIGHTS[idx];
+      shadow.setAttribute('d', moonShadowPath(idx));
+
+      moonSvg.classList.toggle('full-glow', idx === 14 || idx === 15);
+
+      numLabel.textContent = `Night ${idx + 1} of 29`;
+      nightTitle.textContent = n.name;
+      phaseLabel.textContent = n.phase;
+
+      const qMap = {Favourable:'q-favourable',Moderate:'q-moderate',Unfavourable:'q-unfavourable'};
+      qualityBadge.className = 'night-quality-badge ' + qMap[n.quality];
+      qualityBadge.textContent = n.quality;
+
+      nightDesc.textContent = n.meaning;
+      activitiesText.textContent = n.activities;
+      avoidText.textContent = n.avoid ? 'Avoid: ' + n.avoid : '';
+
+      timeline.querySelectorAll('.cycle-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+      });
+    }
+
+    function goTo(idx) {
+      current = idx;
+      render(current);
+    }
+
+    function next() {
+      current = (current + 1) % 29;
+      render(current);
+    }
+
+    function prev() {
+      current = (current - 1 + 29) % 29;
+      render(current);
+    }
+
+    function startPlay() {
+      if (interval) clearInterval(interval);
+      interval = setInterval(next, speed);
+      playing = true;
+      document.getElementById('playBtn').classList.add('playing');
+      document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+    }
+
+    function stopPlay() {
+      if (interval) clearInterval(interval);
+      interval = null;
+      playing = false;
+      document.getElementById('playBtn').classList.remove('playing');
+      document.getElementById('playBtn').innerHTML = '&#9654;';
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+      playing ? stopPlay() : startPlay();
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => { stopPlay(); prev(); });
+    document.getElementById('nextBtn').addEventListener('click', () => { stopPlay(); next(); });
+
+    document.getElementById('speedLabel').addEventListener('click', () => {
+      const speeds = [3000, 2000, 1200, 800];
+      const labels = ['3s', '2s', '1.2s', '0.8s'];
+      let idx = speeds.indexOf(speed);
+      idx = (idx + 1) % speeds.length;
+      speed = speeds[idx];
+      document.getElementById('speedLabel').textContent = labels[idx];
+      if (playing) startPlay();
+    });
+
+    render(0);
+    startPlay();
+  </script>
+</body>
+</html>

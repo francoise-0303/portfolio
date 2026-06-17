@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Te Māramataka — Māori Lunar Calendar</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* Lunar Nights Table */
+  .lunar-section { margin-bottom: 2rem; }
+
+  .lunar-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--star-white);
+    margin-bottom: 1rem;
+    font-weight: 400;
+  }
+
+  .lunar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .lunar-night {
+    background: var(--deep-blue);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .lunar-night .night-num {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    min-width: 14px;
+    text-align: right;
+    padding-top: 2px;
+  }
+
+  .lunar-night .night-info {
+    flex: 1;
+  }
+
+  .lunar-night .night-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--star-white);
+  }
+
+  .lunar-night .night-meaning {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .lunar-night .night-quality {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .lunar-key {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .lunar-key span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .lunar-key .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Moon Phase Display */
+  .moon-phases {
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .moon-phase {
+    width: 28px;
+    height: 28px;
+    position: relative;
+    cursor: default;
+  }
+
+  .moon-phase .moon-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .moon-phase .moon-label {
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    display: none;
+  }
+
+  .moon-phase:hover .moon-label { display: block; }
+
+  /* Full Lunar Reference */
+  .lunar-reference {
+    margin-top: 2rem;
+  }
+
+  .lunar-reference h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--star-white);
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .lunar-reference .ref-subtitle {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .lunar-ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .lunar-ref-item {
+    background: var(--deep-blue);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 0.8rem;
+    align-items: start;
+  }
+
+  .lunar-ref-item .ref-num {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding-top: 2px;
+  }
+
+  .lunar-ref-item .ref-content .ref-name {
+    font-weight: 500;
+    color: var(--star-white);
+    font-size: 0.9rem;
+  }
+
+  .lunar-ref-item .ref-content .ref-phase {
+    font-size: 0.72rem;
+    color: var(--accent-teal);
+    margin-top: 0.1rem;
+  }
+
+  .lunar-ref-item .ref-content .ref-meaning {
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    margin-top: 0.3rem;
+    line-height: 1.5;
+  }
+
+  .lunar-ref-item .ref-content .ref-activities {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.3rem;
+  }
+
+  .lunar-ref-item .ref-quality {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 4px;
+  }
+
+  /* Overview: Māramataka intro */
+  .maramataka-overview {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 0 2rem;
+  }
+
+  .maramataka-overview .intro {
+    font-size: 0.92rem;
+    color: var(--text-body);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .maramataka-overview h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--star-white);
+    font-weight: 400;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .month-card {
+    background: var(--deep-blue);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.2s;
+  }
+
+  .month-card:hover {
+    border-color: var(--accent-teal);
+  }
+
+  .month-card .mc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--star-white);
+    font-weight: 400;
+  }
+
+  .month-card .mc-dates {
+    font-size: 0.72rem;
+    color: var(--accent-teal);
+    margin-top: 0.15rem;
+  }
+
+  .month-card .mc-season {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-top: 0.1rem;
+  }
+
+  .cycle-overview {
+    max-width: 640px;
+    margin: 0 auto 2rem;
+  }
+
+  .cycle-overview p {
+    font-size: 0.88rem;
+    color: var(--text-body);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+  }
+
+  .cycle-phases {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  .phase-card {
+    background: var(--deep-blue);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+  }
+
+  .phase-card h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--star-white);
+    margin-bottom: 0.3rem;
+  }
+
+  .phase-card .phase-nights {
+    font-size: 0.68rem;
+    color: var(--accent-teal);
+    margin-bottom: 0.3rem;
+  }
+
+  .phase-card p {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Te Marama — Moon Animation */
+  .marama-panel { text-align: center; display: none; max-width: 700px; margin: 0 auto; padding: 1rem 0; }
+  .marama-panel.active { display: block; }
+  .marama-stage { width: 220px; height: 220px; margin: 1.5rem auto; }
+  .marama-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 40px rgba(255,253,232,0.12)); transition: filter 0.8s; }
+  .marama-svg.full-glow { filter: drop-shadow(0 0 60px rgba(255,253,232,0.25)); }
+  .marama-num { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-secondary); margin-bottom: 0.5rem; }
+  .marama-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 400; color: var(--star-white); margin-bottom: 0.2rem; }
+  .marama-phase { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.8rem; }
+  .marama-badge { display: inline-block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.25rem 1rem; border-radius: 3px; margin-bottom: 1rem; font-weight: 500; }
+  .marama-badge.q-fav { background: rgba(61,184,160,0.15); color: var(--good-day); }
+  .marama-badge.q-mod { background: rgba(212,160,64,0.15); color: var(--moderate-day); }
+  .marama-badge.q-unf { background: rgba(160,80,64,0.15); color: var(--poor-day); }
+  .marama-desc { font-size: 0.88rem; color: var(--text-body); line-height: 1.75; max-width: 500px; margin: 0 auto 0.8rem; }
+  .marama-act { font-size: 0.8rem; color: var(--accent-teal); opacity: 0.8; }
+  .marama-avoid { font-size: 0.78rem; color: var(--poor-day); opacity: 0.7; margin-top: 0.3rem; }
+  .marama-dots { display: flex; justify-content: center; gap: 5px; margin: 1.5rem auto 1rem; flex-wrap: wrap; max-width: 550px; }
+  .marama-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: transparent; cursor: pointer; transition: all 0.3s; padding: 0; }
+  .marama-dot:hover { border-color: var(--text-secondary); transform: scale(1.3); }
+  .marama-dot.active { background: var(--moon-glow); border-color: var(--moon-glow); box-shadow: 0 0 8px rgba(255,253,232,0.4); transform: scale(1.4); }
+  .marama-dot.d-fav { border-color: rgba(61,184,160,0.4); }
+  .marama-dot.d-mod { border-color: rgba(212,160,64,0.4); }
+  .marama-dot.d-unf { border-color: rgba(160,80,64,0.4); }
+  .marama-controls { display: flex; align-items: center; justify-content: center; gap: 0.8rem; margin: 1rem 0; }
+  .marama-controls button { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .marama-controls button:hover { border-color: var(--accent-teal); color: var(--accent-teal); }
+  .marama-controls .m-playing { background: var(--accent-teal); border-color: var(--accent-teal); color: var(--night); }
+  .marama-speed { font-size: 0.68rem; color: var(--text-secondary); cursor: pointer; min-width: 2rem; }
+
+  /* Content panels */
+  .content-panel { display: none; }
+  .content-panel.active { display: block; }
+
+  @media (max-width: 600px) {
+    .lunar-grid { grid-template-columns: 1fr; }
+    .lunar-ref-grid { grid-template-columns: 1fr; }
+    .months-grid { grid-template-columns: 1fr; }
+    .cycle-phases { grid-template-columns: 1fr; }
+    .marama-stage { width: 160px; height: 160px; }
+    .marama-title { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand">Aroha's Atelier</a>
+  <ul class="nav-links">
+    <li><a href="maramataka.html" class="active">Te Māramataka</a></li>
+    <li><a href="maramataka-local.html">Your Land</a></li>
+    <li><a href="star-journey.html">Ngā Whetū</a></li>
+    <li><a href="the-science-of-the-maramataka.html">The Science</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <h1>Te Māramataka</h1>
+  <p class="subtitle">The Māori Lunar Calendar</p>
+  <p class="note">The Māramataka varies between iwi and regions. This reference draws from widely shared traditions. Consult your own iwi or hapū traditions for local practice.</p>
+</header>
+
+<div class="tab-bar" id="tabBar">
+  <button class="active" onclick="showTab('overview')">The Māramataka</button>
+  <button onclick="showTab('lunar')">The 29 Nights</button>
+  <button onclick="showTab('reference')">Full Reference</button>
+  <button onclick="showTab('marama')">Te Marama</button>
+</div>
+
+<main>
+
+<!-- Overview -->
+<div class="content-panel active" data-tab="overview">
+  <div class="maramataka-overview">
+    <p class="intro">The Māramataka is the Māori lunar calendar. Each month (marama) follows the moon through 29 named nights. The quality of each night guides what to plant and when to rest. The cycle repeats every month, but the stars overhead and the season on the land shift as the year turns.</p>
+
+    <h3>Ngā Marama: The Twelve Months</h3>
+    <div class="months-grid">
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-0">
+        <div class="mc-name">Pipiri</div>
+        <div class="mc-dates">June – July</div>
+        <div class="mc-season">Early Winter (Hōtoke)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-1">
+        <div class="mc-name">Hōngongoi</div>
+        <div class="mc-dates">July – August</div>
+        <div class="mc-season">Mid Winter (Hōtoke)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-2">
+        <div class="mc-name">Here-turi-kōkā</div>
+        <div class="mc-dates">August – September</div>
+        <div class="mc-season">Late Winter (Hōtoke)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-3">
+        <div class="mc-name">Mahuru</div>
+        <div class="mc-dates">September – October</div>
+        <div class="mc-season">Early Spring (Koanga)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-4">
+        <div class="mc-name">Whiringa-ā-nuku</div>
+        <div class="mc-dates">October – November</div>
+        <div class="mc-season">Mid Spring (Koanga)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-5">
+        <div class="mc-name">Whiringa-ā-rangi</div>
+        <div class="mc-dates">November – December</div>
+        <div class="mc-season">Late Spring (Koanga)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-6">
+        <div class="mc-name">Hakihea</div>
+        <div class="mc-dates">December – January</div>
+        <div class="mc-season">Early Summer (Raumati)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-7">
+        <div class="mc-name">Kohītātea</div>
+        <div class="mc-dates">January – February</div>
+        <div class="mc-season">Mid Summer (Raumati)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-8">
+        <div class="mc-name">Hui-tanguru</div>
+        <div class="mc-dates">February – March</div>
+        <div class="mc-season">Late Summer (Raumati)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-9">
+        <div class="mc-name">Poutū-te-rangi</div>
+        <div class="mc-dates">March – April</div>
+        <div class="mc-season">Early Autumn (Ngahuru)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-10">
+        <div class="mc-name">Paenga-whāwhā</div>
+        <div class="mc-dates">April – May</div>
+        <div class="mc-season">Mid Autumn (Ngahuru)</div>
+      </a>
+      <a href="star-journey.html" class="month-card" onclick="return false;" id="mc-11">
+        <div class="mc-name">Haratua</div>
+        <div class="mc-dates">May – June</div>
+        <div class="mc-season">Late Autumn (Ngahuru)</div>
+      </a>
+    </div>
+
+    <h3>The Lunar Cycle</h3>
+    <div class="cycle-overview">
+      <p>Within each month, the moon passes through 29 named nights. Some are favourable for planting and fishing. Others demand rest. Four patterns shape the cycle:</p>
+
+      <div class="cycle-phases">
+        <div class="phase-card">
+          <h4>The Tamatea Nights</h4>
+          <div class="phase-nights">Nights 6, 7, 8</div>
+          <p>Three nights of unsettled energy around the first quarter moon. Named for the atua Tamatea. Avoid the sea and important tasks.</p>
+        </div>
+        <div class="phase-card">
+          <h4>Rākaunui</h4>
+          <div class="phase-nights">Night 15</div>
+          <p>The full moon. The most favourable night of the entire cycle. Everything planted or begun on Rākaunui thrives.</p>
+        </div>
+        <div class="phase-card">
+          <h4>The Korekore Void</h4>
+          <div class="phase-nights">Nights 19, 20, 21</div>
+          <p>The void. The moon wanes and energy drains. Rest, reflect, and wait for the turn toward Tangaroa.</p>
+        </div>
+        <div class="phase-card">
+          <h4>The Tangaroa Nights</h4>
+          <div class="phase-nights">Nights 22, 23, 24</div>
+          <p>The god of the sea is ascendant. Excellent for all fishing and ocean activities. The waning moon draws fish to the surface.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lunar Nights -->
+<div class="content-panel" data-tab="lunar" id="lunarPanel"></div>
+
+<!-- Full Reference -->
+<div class="content-panel" data-tab="reference" id="referencePanel"></div>
+
+<!-- Te Marama — Moon Animation Panel -->
+<div class="marama-panel" id="maramaPanel">
+  <div class="marama-stage">
+    <svg class="marama-svg" id="maramaSvg" viewBox="0 0 200 200">
+      <defs>
+        <radialGradient id="mSurface" cx="38%" cy="35%">
+          <stop offset="0%" stop-color="#fffde8"/>
+          <stop offset="45%" stop-color="#ede5c4"/>
+          <stop offset="100%" stop-color="#d8d0a8"/>
+        </radialGradient>
+        <radialGradient id="mCrater" cx="50%" cy="50%">
+          <stop offset="0%" stop-color="rgba(0,0,0,0.08)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0.01)"/>
+        </radialGradient>
+        <filter id="mBlur"><feGaussianBlur in="SourceGraphic" stdDeviation="0.5"/></filter>
+        <clipPath id="mDisc"><circle cx="100" cy="100" r="80"/></clipPath>
+      </defs>
+      <circle cx="100" cy="100" r="80" fill="url(#mSurface)"/>
+      <g clip-path="url(#mDisc)" opacity="0.45">
+        <circle cx="68" cy="58" r="14" fill="url(#mCrater)"/>
+        <circle cx="125" cy="78" r="20" fill="url(#mCrater)"/>
+        <circle cx="82" cy="132" r="11" fill="url(#mCrater)"/>
+        <circle cx="134" cy="48" r="9" fill="url(#mCrater)"/>
+        <circle cx="56" cy="108" r="16" fill="url(#mCrater)"/>
+        <circle cx="145" cy="118" r="12" fill="url(#mCrater)"/>
+      </g>
+      <path id="mShadow" d="" fill="rgba(10,14,26,0.94)" clip-path="url(#mDisc)" filter="url(#mBlur)"/>
+      <circle cx="100" cy="100" r="81" fill="none" stroke="rgba(255,253,232,0.06)" stroke-width="2"/>
+    </svg>
+  </div>
+  <div class="marama-num" id="mNum">Night 1 of 29</div>
+  <div class="marama-title" id="mTitle">Whiro</div>
+  <div class="marama-phase" id="mPhase">New Moon</div>
+  <div class="marama-badge q-unf" id="mBadge">Unfavourable</div>
+  <div class="marama-desc" id="mDesc"></div>
+  <div class="marama-act" id="mAct"></div>
+  <div class="marama-avoid" id="mAvoid"></div>
+  <div class="marama-dots" id="mDots"></div>
+  <div class="marama-controls">
+    <button id="mPrev" title="Previous night">&#9664;</button>
+    <button id="mPlay" class="m-playing" title="Play / Pause">&#9646;&#9646;</button>
+    <button id="mNext" title="Next night">&#9654;</button>
+    <span class="marama-speed" id="mSpeed" title="Click to change speed">2s</span>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>Aroha's Atelier — Indigenous Reconnection</p>
+  <p class="footer-disclaimer">The Māramataka varies between iwi and regions across Aotearoa. This reference draws from widely shared traditions and should be used alongside your own iwi and hapū knowledge.</p>
+</footer>
+
+<script>
+let currentTab = 'overview';
+
+function showTab(tabName) {
+  currentTab = tabName;
+
+  document.querySelectorAll('#tabBar button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#tabBar button').forEach(b => {
+    if ((tabName === 'overview' && b.textContent.includes('Māramataka')) ||
+        (tabName === 'lunar' && b.textContent.includes('29')) ||
+        (tabName === 'reference' && b.textContent === 'Full Reference') ||
+        (tabName === 'marama' && b.textContent === 'Te Marama')) {
+      b.classList.add('active');
+    }
+  });
+
+  const maramaPanel = document.getElementById('maramaPanel');
+
+  if (tabName === 'marama') {
+    document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+    maramaPanel.classList.add('active');
+    if (!maramaInitialized) initMarama();
+    return;
+  }
+
+  maramaPanel.classList.remove('active');
+  document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.querySelector(`.content-panel[data-tab="${tabName}"]`);
+  if (panel) {
+    panel.classList.add('active');
+    if (tabName === 'lunar' && panel.innerHTML.trim() === '') renderLunarTab(panel);
+    if (tabName === 'reference' && panel.innerHTML.trim() === '') renderReferenceTab(panel);
+  }
+}
+
+const lunarNights = [
+  { num: 1, name: 'Whiro', phase: 'New Moon', meaning: 'The new moon appears. A day of darkness associated with Whiro, the embodiment of evil and misfortune. Rest. Don\'t begin new ventures.', quality: 'poor', activities: 'Avoid planting, fishing, and starting new work' },
+  { num: 2, name: 'Tirea', phase: 'Waxing Crescent', meaning: 'The first sliver of light returns. Energy begins to build slowly. Moderate conditions for light tasks.', quality: 'moderate', activities: 'Light preparation work, planning' },
+  { num: 3, name: 'Hoata', phase: 'Waxing Crescent', meaning: 'Light increases and warms. The name suggests gleaming or shining. Good for fishing and beginning work.', quality: 'good', activities: 'Fishing, starting small projects' },
+  { num: 4, name: 'Ōue', phase: 'Waxing Crescent', meaning: 'Favourable energy continues to build. Good for ocean fishing and planting near-surface crops.', quality: 'good', activities: 'Ocean fishing, planting, gathering' },
+  { num: 5, name: 'Okoro', phase: 'Waxing Crescent', meaning: 'Energy is strong and positive. An excellent day for planting, fishing, and productive work.', quality: 'good', activities: 'Planting root crops, deep-sea fishing, all productive work' },
+  { num: 6, name: 'Tamatea-āngana', phase: 'First Quarter approaching', meaning: 'First of the Tamatea nights, associated with the atua Tamatea. Unsettled weather and energy. Avoid important tasks.', quality: 'poor', activities: 'Rest, indoor work, avoid the sea' },
+  { num: 7, name: 'Tamatea-aio', phase: 'First Quarter', meaning: 'A calmer Tamatea night. Aio means peaceful. The disruption eases. Moderate conditions.', quality: 'moderate', activities: 'Light tasks, cautious fishing' },
+  { num: 8, name: 'Tamatea-whakapau', phase: 'First Quarter', meaning: 'The last and most intense Tamatea night. Whakapau means to exhaust or spend completely. Rest.', quality: 'poor', activities: 'Rest, spiritual reflection, avoid the ocean' },
+  { num: 9, name: 'Huna', phase: 'Waxing Gibbous', meaning: 'Things hidden are revealed. A transitional night; the difficult energy of Tamatea passes.', quality: 'moderate', activities: 'Divination, seeking lost things, moderate tasks' },
+  { num: 10, name: 'Ariki', phase: 'Waxing Gibbous', meaning: 'The chiefly night. Ariki means chief or leader. Very favourable for all activities. High energy and good fortune.', quality: 'good', activities: 'All activities favoured: planting, fishing, travel, ceremonies' },
+  { num: 11, name: 'Hotu', phase: 'Waxing Gibbous', meaning: 'Abundance and fruitfulness. Excellent conditions. The earth is productive, the seas generous.', quality: 'good', activities: 'Planting, harvesting, ocean fishing, communal gatherings' },
+  { num: 12, name: 'Māwharu', phase: 'Waxing Gibbous', meaning: 'The moon is fattening, growing full. Good general conditions continue.', quality: 'good', activities: 'All productive work, fishing, planting above-ground crops' },
+  { num: 13, name: 'Ōhua', phase: 'Nearly Full', meaning: 'The moon is nearly full. Good energy but beginning to peak. Moderate to good conditions.', quality: 'moderate', activities: 'Fishing, gathering, preparation work' },
+  { num: 14, name: 'Turu', phase: 'Nearly Full', meaning: 'Standing firm. Turu means a prop or support. Stable, reliable conditions. Good for steady work.', quality: 'good', activities: 'Planting, building, steady productive work' },
+  { num: 15, name: 'Rākaunui', phase: 'Full Moon', meaning: 'The full moon. Rākau nui, the great tree. The most favourable night of the entire cycle. Excellent for everything.', quality: 'good', activities: 'All activities highly favoured: plant, fish, gather, celebrate' },
+  { num: 16, name: 'Rākaumatohi', phase: 'Full Moon', meaning: 'The night after full moon, still very favourable. The great energy of Rākaunui lingers.', quality: 'good', activities: 'Continue all good work from Rākaunui' },
+  { num: 17, name: 'Takirau', phase: 'Waning Gibbous', meaning: 'Good for fishing and ocean activities. The waning moon pulls water and draws fish to the surface.', quality: 'good', activities: 'Fishing, especially net fishing and diving' },
+  { num: 18, name: 'Ōika', phase: 'Waning Gibbous', meaning: 'Energy begins to diminish. Moderate conditions, still workable but waning.', quality: 'moderate', activities: 'Moderate tasks, harvesting, indoor work' },
+  { num: 19, name: 'Korekore-te-whiwhia', phase: 'Last Quarter approaching', meaning: 'The void begins. Korekore means nothingness. Te whiwhia: nothing is obtained. Unfavourable.', quality: 'poor', activities: 'Rest, reflection, avoid starting new ventures' },
+  { num: 20, name: 'Korekore-te-rawea', phase: 'Last Quarter', meaning: 'The void continues. Te rawea: nothing to delight in. A time for rest and spiritual practice.', quality: 'poor', activities: 'Spiritual work, rest, storytelling, wānanga' },
+  { num: 21, name: 'Korekore-piri-ki-Tangaroa', phase: 'Last Quarter', meaning: 'Drawing near to Tangaroa (god of the sea). The void transitions toward ocean energy.', quality: 'moderate', activities: 'Preparation for fishing, mending nets, ocean observation' },
+  { num: 22, name: 'Tangaroa-ā-mua', phase: 'Waning Crescent', meaning: 'First night of Tangaroa, god of the sea ascendant. Excellent for all fishing.', quality: 'good', activities: 'Ocean fishing, river fishing, shellfish gathering' },
+  { num: 23, name: 'Tangaroa-ā-roto', phase: 'Waning Crescent', meaning: 'Tangaroa within. Deep ocean energy. Very good for fishing, especially in deeper waters.', quality: 'good', activities: 'Deep-sea fishing, diving, all ocean activities' },
+  { num: 24, name: 'Tangaroa-kiokio', phase: 'Waning Crescent', meaning: 'Last night of Tangaroa. Still good for fishing. The kiokio (a fern) unfurls, the final opening of this energy.', quality: 'good', activities: 'Fishing, kaimoana gathering, water-related activities' },
+  { num: 25, name: 'Ōtāne', phase: 'Waning Crescent', meaning: 'Night of Tāne, god of forests and light. Favourable for forest work and planting.', quality: 'good', activities: 'Planting, forest gathering, bird work, land-based activities' },
+  { num: 26, name: 'Ōrongonui', phase: 'Waning Crescent', meaning: 'Great listening. Ōrongo means to listen, nui means great. Favourable for all work and decision-making.', quality: 'good', activities: 'Planting, decisions, community meetings, all productive work' },
+  { num: 27, name: 'Mauri', phase: 'Dark Moon', meaning: 'Life force. The mauri (essence) of the moon fades. Transitional. The cycle draws to its close.', quality: 'moderate', activities: 'Complete ongoing tasks, prepare for the new cycle' },
+  { num: 28, name: 'Mutuwhenua', phase: 'Dark Moon', meaning: 'The land is cut off. Mutu (ended) whenua (land). The darkest night. Rest completely.', quality: 'poor', activities: 'Rest, don\'t plant or fish, spiritual reflection' },
+  { num: 29, name: 'Tireo', phase: 'Dark Moon / New Moon eve', meaning: 'The looking. The moon watches for its own return. A liminal night between cycles.', quality: 'poor', activities: 'Rest, contemplation, await the new moon' },
+];
+
+function renderLunarTab(panel) {
+  let html = `
+    <div style="max-width:1100px;margin:0 auto;padding:2rem 0">
+    <div class="month-header" style="text-align:center;margin-bottom:1.5rem">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:400;color:var(--star-white);margin-bottom:0.3rem">The 29 Lunar Nights</h2>
+      <p class="gregorian" style="font-size:0.85rem;color:var(--text-secondary)">Each marama follows the moon through 29 named nights, the same cycle every month</p>
+    </div>
+    <div class="lunar-grid">
+  `;
+
+  lunarNights.forEach(n => {
+    html += `
+      <div class="lunar-night">
+        <span class="night-num">${n.num}</span>
+        <div class="night-info">
+          <div class="night-name">${n.name}</div>
+          <div class="night-meaning">${n.meaning.split('.')[0]}.</div>
+        </div>
+        <div class="night-quality quality-${n.quality}"></div>
+      </div>
+    `;
+  });
+
+  html += `</div>
+    <div class="lunar-key">
+      <span><div class="dot quality-good"></div> Favourable</span>
+      <span><div class="dot quality-moderate"></div> Moderate</span>
+      <span><div class="dot quality-poor"></div> Unfavourable / Rest</span>
+    </div>
+    </div>
+  `;
+
+  panel.innerHTML = html;
+}
+
+function renderReferenceTab(panel) {
+  let html = `
+    <div style="max-width:1100px;margin:0 auto;padding:2rem 0">
+    <div class="lunar-reference">
+      <h3>Complete Lunar Night Reference</h3>
+      <p class="ref-subtitle">The 29 nights of the Māori lunar cycle: names, meanings, phases, and recommended activities</p>
+      <div class="lunar-ref-grid">
+  `;
+
+  lunarNights.forEach(n => {
+    html += `
+      <div class="lunar-ref-item">
+        <div class="ref-num">${n.num}</div>
+        <div class="ref-content">
+          <div class="ref-name">${n.name}</div>
+          <div class="ref-phase">${n.phase}</div>
+          <div class="ref-meaning">${n.meaning}</div>
+          <div class="ref-activities"><strong>Activities:</strong> ${n.activities}</div>
+        </div>
+        <div class="ref-quality quality-${n.quality}"></div>
+      </div>
+    `;
+  });
+
+  html += `</div></div></div>`;
+  panel.innerHTML = html;
+}
+
+// ===== Te Marama — Moon Phase Animation =====
+const MARAMA_NIGHTS = [
+  {name:"Whiro",phase:"New Moon",q:"Unfavourable",desc:"The new moon appears. A day of darkness associated with Whiro, the embodiment of evil and misfortune. Rest.",act:"Rest, spiritual reflection",avoid:"Planting, fishing, starting new ventures"},
+  {name:"Tirea",phase:"Waxing Crescent",q:"Moderate",desc:"The first sliver of light returns. Energy begins to build slowly.",act:"Light preparation work, planning",avoid:"Major new undertakings"},
+  {name:"Hoata",phase:"Waxing Crescent",q:"Favourable",desc:"Light increases and warms. The name suggests gleaming or shining.",act:"Fishing, beginning new work, light planting",avoid:""},
+  {name:"Ōue",phase:"Waxing Crescent",q:"Favourable",desc:"Favourable energy continues to build.",act:"Ocean fishing, planting near-surface crops, gathering",avoid:""},
+  {name:"Okoro",phase:"Waxing Crescent",q:"Favourable",desc:"Energy is strong and positive. An excellent day.",act:"Planting root crops, deep-sea fishing, all productive work",avoid:""},
+  {name:"Tamatea-āngana",phase:"First Quarter approaching",q:"Unfavourable",desc:"First of the Tamatea nights, associated with the atua Tamatea. Unsettled weather and energy.",act:"Rest, indoor work",avoid:"The sea, important tasks, new ventures"},
+  {name:"Tamatea-aio",phase:"First Quarter",q:"Moderate",desc:"A calmer Tamatea night. Aio means peaceful. The disruption eases.",act:"Light tasks, cautious fishing",avoid:"Major decisions"},
+  {name:"Tamatea-whakapau",phase:"First Quarter",q:"Unfavourable",desc:"The last and most intense Tamatea night. Whakapau means to exhaust completely.",act:"Rest, spiritual reflection",avoid:"Ocean, planting, starting anything new"},
+  {name:"Huna",phase:"Waxing Gibbous",q:"Moderate",desc:"Things hidden are revealed. A transitional night.",act:"Divination, seeking lost things, moderate tasks",avoid:""},
+  {name:"Ariki",phase:"Waxing Gibbous",q:"Favourable",desc:"The chiefly night. Ariki means chief. Very favourable. High energy and good fortune.",act:"All activities: planting, fishing, travel, ceremonies",avoid:""},
+  {name:"Hotu",phase:"Waxing Gibbous",q:"Favourable",desc:"Abundance and fruitfulness. Excellent conditions.",act:"Planting, harvesting, ocean fishing, communal gatherings",avoid:""},
+  {name:"Māwharu",phase:"Waxing Gibbous",q:"Favourable",desc:"The moon is fattening, growing full. Good general conditions.",act:"All productive work, fishing, planting above-ground crops",avoid:""},
+  {name:"Ōhua",phase:"Nearly Full",q:"Moderate",desc:"The moon is nearly full. Good energy but beginning to peak.",act:"Fishing, gathering, preparation work",avoid:""},
+  {name:"Turu",phase:"Nearly Full",q:"Favourable",desc:"Standing firm. Turu means a prop or support. Stable, reliable.",act:"Planting, building, steady productive work",avoid:""},
+  {name:"Rākaunui",phase:"Full Moon",q:"Favourable",desc:"The full moon. Rākau nui, the great tree. Most favourable night of the entire cycle.",act:"All activities highly favoured: plant, fish, gather, celebrate",avoid:""},
+  {name:"Rākaumatohi",phase:"Full Moon (waning)",q:"Favourable",desc:"The night after full moon, still very favourable. The energy of Rākaunui lingers.",act:"Continue all good work from Rākaunui",avoid:""},
+  {name:"Takirau",phase:"Waning Gibbous",q:"Favourable",desc:"Good for fishing and ocean activities. Waning moon pulls water and draws fish.",act:"Fishing (especially net fishing and diving), ocean activities",avoid:""},
+  {name:"Ōika",phase:"Waning Gibbous",q:"Moderate",desc:"Energy begins to diminish. Still workable but waning.",act:"Moderate tasks, harvesting, indoor work",avoid:""},
+  {name:"Korekore-te-whiwhia",phase:"Last Quarter approaching",q:"Unfavourable",desc:"The void begins. Korekore means nothingness. Te whiwhia: nothing is obtained.",act:"Rest, reflection",avoid:"Starting new ventures, planting"},
+  {name:"Korekore-te-rawea",phase:"Last Quarter",q:"Unfavourable",desc:"The void continues. Te rawea: nothing to delight in.",act:"Spiritual work, rest, storytelling, wānanga",avoid:"Planting, fishing"},
+  {name:"Korekore-piri-ki-Tangaroa",phase:"Last Quarter",q:"Moderate",desc:"Drawing near to Tangaroa (god of the sea). Ocean energy returns.",act:"Preparation for fishing, mending nets, ocean observation",avoid:""},
+  {name:"Tangaroa-ā-mua",phase:"Waning Crescent",q:"Favourable",desc:"First night of Tangaroa, god of the sea ascendant.",act:"Ocean fishing, river fishing, shellfish gathering",avoid:""},
+  {name:"Tangaroa-ā-roto",phase:"Waning Crescent",q:"Favourable",desc:"Tangaroa within. Deep ocean energy. Very good for fishing.",act:"Deep-sea fishing, diving, all ocean activities",avoid:""},
+  {name:"Tangaroa-kiokio",phase:"Waning Crescent",q:"Favourable",desc:"Last night of Tangaroa. Kiokio (a fern) unfurls, the final opening of this energy.",act:"Fishing, kaimoana gathering, water-related activities",avoid:""},
+  {name:"Ōtāne",phase:"Waning Crescent",q:"Favourable",desc:"Night of Tāne, god of forests and light.",act:"Planting, forest gathering, bird work, land-based activities",avoid:""},
+  {name:"Ōrongonui",phase:"Waning Crescent",q:"Favourable",desc:"Great listening. Ōrongo means to listen, nui means great.",act:"Planting, decisions, community meetings, all productive work",avoid:""},
+  {name:"Mauri",phase:"Dark Moon",q:"Moderate",desc:"Life force. The mauri (essence) of the moon fades. Transitional.",act:"Complete ongoing tasks, prepare for the new cycle",avoid:""},
+  {name:"Mutuwhenua",phase:"Dark Moon",q:"Unfavourable",desc:"The land is cut off. Mutu (ended) whenua (land). The darkest night.",act:"Rest, spiritual reflection",avoid:"Planting, fishing"},
+  {name:"Tireo",phase:"Dark Moon / New Moon eve",q:"Unfavourable",desc:"The looking. The moon watches for its own return. A liminal night between cycles.",act:"Rest, contemplation, await the new moon",avoid:"Starting anything new"}
+];
+
+let maramaInitialized = false;
+let mCurrent = 0, mPlaying = false, mTimer = null, mSpeed = 2000;
+
+function moonPath(n) {
+  const R = 80;
+  let illum, wax;
+  if (n < 14) { illum = n / 14; wax = true; }
+  else if (n === 14) return '';
+  else { illum = (28 - n) / 14; wax = false; }
+  if (illum <= 0.01) return 'M 100 20 A 80 80 0 1 0 100 180 A 80 80 0 1 0 100 20 Z';
+  if (illum >= 0.99) return '';
+  const k = Math.cos(Math.PI * illum);
+  const tRx = Math.max(Math.abs(k) * R, 0.5);
+  if (wax) return `M 100 20 A 80 80 0 0 0 100 180 A ${tRx} 80 0 0 ${k>=0?0:1} 100 20 Z`;
+  return `M 100 20 A 80 80 0 0 1 100 180 A ${tRx} 80 0 0 ${k>=0?1:0} 100 20 Z`;
+}
+
+function renderMarama(idx) {
+  const n = MARAMA_NIGHTS[idx];
+  document.getElementById('mShadow').setAttribute('d', moonPath(idx));
+  document.getElementById('maramaSvg').classList.toggle('full-glow', idx === 14 || idx === 15);
+  document.getElementById('mNum').textContent = `Night ${idx+1} of 29`;
+  document.getElementById('mTitle').textContent = n.name;
+  document.getElementById('mPhase').textContent = n.phase;
+  const badge = document.getElementById('mBadge');
+  badge.className = 'marama-badge ' + (n.q==='Favourable'?'q-fav':n.q==='Moderate'?'q-mod':'q-unf');
+  badge.textContent = n.q;
+  document.getElementById('mDesc').textContent = n.desc;
+  document.getElementById('mAct').textContent = n.act;
+  document.getElementById('mAvoid').textContent = n.avoid ? 'Avoid: ' + n.avoid : '';
+  document.querySelectorAll('.marama-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+}
+
+function initMarama() {
+  const dots = document.getElementById('mDots');
+  MARAMA_NIGHTS.forEach((n,i) => {
+    const d = document.createElement('button');
+    d.className = 'marama-dot ' + (n.q==='Favourable'?'d-fav':n.q==='Moderate'?'d-mod':'d-unf');
+    d.title = `${i+1}. ${n.name}`;
+    d.addEventListener('click', () => { mCurrent = i; renderMarama(i); });
+    dots.appendChild(d);
+  });
+  document.getElementById('mPrev').addEventListener('click', () => { stopMarama(); mCurrent = (mCurrent-1+29)%29; renderMarama(mCurrent); });
+  document.getElementById('mNext').addEventListener('click', () => { stopMarama(); mCurrent = (mCurrent+1)%29; renderMarama(mCurrent); });
+  document.getElementById('mPlay').addEventListener('click', () => { mPlaying ? stopMarama() : startMarama(); });
+  document.getElementById('mSpeed').addEventListener('click', () => {
+    const sp = [3000,2000,1200,800], lb = ['3s','2s','1.2s','0.8s'];
+    let i = sp.indexOf(mSpeed); i = (i+1)%sp.length; mSpeed = sp[i];
+    document.getElementById('mSpeed').textContent = lb[i];
+    if (mPlaying) startMarama();
+  });
+  renderMarama(0);
+  startMarama();
+  maramaInitialized = true;
+}
+
+function startMarama() {
+  if (mTimer) clearInterval(mTimer);
+  mTimer = setInterval(() => { mCurrent = (mCurrent+1)%29; renderMarama(mCurrent); }, mSpeed);
+  mPlaying = true;
+  const btn = document.getElementById('mPlay');
+  btn.classList.add('m-playing');
+  btn.innerHTML = '&#9646;&#9646;';
+}
+
+function stopMarama() {
+  if (mTimer) clearInterval(mTimer);
+  mTimer = null; mPlaying = false;
+  const btn = document.getElementById('mPlay');
+  btn.classList.remove('m-playing');
+  btn.innerHTML = '&#9654;';
+}
+
+showTab('overview');
+</script>
+
+</body>
+</html>

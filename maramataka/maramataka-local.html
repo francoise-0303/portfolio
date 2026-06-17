@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Te Māramataka: Relational to Your Land</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  :root {
+    --aotearoa: #3d8ab8;
+    --local: #c87040;
+  }
+
+  .location-bar {
+    background: var(--deep-blue);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .location-bar label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .location-bar select {
+    background: var(--mid-blue);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .location-bar .location-info {
+    font-size: 0.78rem;
+    color: var(--accent-warm);
+    font-weight: 400;
+  }
+
+  /* Side-by-side comparison */
+  .comparison-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.2rem;
+    background: var(--deep-blue);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+  }
+
+  .comparison-side {
+    text-align: center;
+    padding: 0.8rem;
+  }
+
+  .comparison-side .comp-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+  }
+
+  .comparison-side.aotearoa .comp-label { color: var(--aotearoa); }
+  .comparison-side.local .comp-label { color: var(--local); }
+
+  .comparison-side .comp-dates {
+    font-size: 1rem;
+    color: var(--star-white);
+    font-weight: 400;
+  }
+
+  .comparison-side .comp-season {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
+  }
+
+  .comparison-divider {
+    width: 1px;
+    background: var(--border-subtle);
+    margin: 0 -0.5rem;
+  }
+
+  .comparison-strip::before {
+    display: none;
+  }
+
+  /* Activities — dual column */
+  .activities-dual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .activities-column h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid;
+  }
+
+  .activities-column.aotearoa-col h3 {
+    color: var(--aotearoa);
+    border-color: var(--aotearoa);
+  }
+
+  .activities-column.local-col h3 {
+    color: var(--local);
+    border-color: var(--local);
+  }
+
+  .activities-dual .activities-grid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  /* Relational Note */
+  .relational-note {
+    background: linear-gradient(135deg, rgba(200,112,64,0.08) 0%, rgba(61,184,160,0.08) 100%);
+    border: 1px solid rgba(200,112,64,0.2);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+
+  .relational-note strong {
+    color: var(--star-gold);
+    font-weight: 500;
+  }
+
+  .star-visibility-note {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--accent-warm);
+    margin-top: 0.8rem;
+    font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .comparison-strip { grid-template-columns: 1fr; }
+    .activities-dual { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand">Aroha's Atelier</a>
+  <ul class="nav-links">
+    <li><a href="maramataka.html">Te Māramataka</a></li>
+    <li><a href="maramataka-local.html" class="active">Your Land</a></li>
+    <li><a href="star-journey.html">Ngā Whetū</a></li>
+    <li><a href="the-science-of-the-maramataka.html">The Science</a></li>
+  </ul>
+</nav>
+
+<header class="page-header">
+  <h1>Te Māramataka: Relational to Your Land</h1>
+  <p class="subtitle">The Māramataka follows the tohu, the signs. It lives in relationship with the land beneath your feet and the sky above you.</p>
+</header>
+
+<div class="location-bar">
+  <label for="locationSelect">Your land:</label>
+  <select id="locationSelect" onchange="changeLocation(this.value)">
+    <option value="san-antonio" selected>San Antonio, TX (29.4°N)</option>
+    <option value="aotearoa">Aotearoa / New Zealand (41°S)</option>
+  </select>
+  <span class="location-info" id="locationInfo">Northern Hemisphere · Pipiri aligns with your December</span>
+</div>
+
+<nav class="month-nav" id="monthNav"></nav>
+
+<main id="mainContent"></main>
+
+<footer>
+  <p>Aroha's Atelier · Indigenous Reconnection</p>
+  <p class="footer-disclaimer">The Māramataka is relational. It lives in the relationship between observer and sky, earth and season. The lunar nights cycle (Whiro through Tireo) remains the same everywhere. What changes is the season, the stars visible, the activities of the land, and the way each place responds.</p>
+</footer>
+
+<script>
+const locations = {
+  'san-antonio': {
+    name: 'San Antonio, TX',
+    lat: 29.4,
+    hemisphere: 'north',
+    monthShift: 6,
+    info: 'Northern Hemisphere · Pipiri aligns with your December',
+    canSeeSouthernCross: false,
+    canSeeCanopus: 'barely',
+  },
+  'aotearoa': {
+    name: 'Aotearoa / NZ',
+    lat: -41,
+    hemisphere: 'south',
+    monthShift: 0,
+    info: 'Southern Hemisphere · Traditional alignment',
+    canSeeSouthernCross: true,
+    canSeeCanopus: true,
+  },
+};
+
+const gregorianMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const months = [
+  {
+    id: 'pipiri',
+    name: 'Pipiri',
+    aotearoaGregorian: 'June – July',
+    aotearoaSeason: 'Early Winter (Hōtoke)',
+    seasonType: 'Early Winter',
+    meaning: "To draw together. All things draw close for warmth",
+    description: "The beginning of the Māori year. Pipiri speaks to contraction, the earth and the people drawing inward. This is the threshold: honour what has passed and set your intentions for the cycle ahead.",
+    whakataukī: "Ka puta Matariki, ka rere Whānui, ko te tohu tēnā o te tau hou",
+    whakataukīTranslation: "When Matariki rises and Whānui trails, that is the sign of the new year",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Rest the earth (no major planting)', 'Harvest remaining root crops', 'Gather firewood and prepare stores', 'Collect rongoā for winter'] },
+      { title: 'Water & Hunting', items: ['Inshore fishing on good lunar nights', 'Hīnaki (eel traps) in rivers', 'Preserve fish by drying and smoking', 'Kererū season in some regions'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Plant cool-season crops: spinach, kale, chard, lettuce', 'Set onion transplants and garlic cloves', 'Harvest winter root vegetables: carrots, beets, turnips', 'Mulch beds heavily against hard freezes'] },
+        { title: 'Water & Gathering', items: ['Trout stocking in local rivers, fly fishing season', 'Bass fishing slows in cold water; deep, slow retrieval', 'Harvest native pecans from creek bottoms', 'Gather rosehips and dried herbs for winter teas'] },
+        { title: 'Local Ecology', items: ['Cedar (Ashe juniper) pollination, "cedar fever" season', 'Overwintering monarch butterflies in sheltered groves', 'Watch for great horned owls nesting early', 'Short days; honour the darkness, rest'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Matariki (heliacal rising)', 'Puanga (Rigel)', 'Takurua (Sirius)', 'Tautoru (Orion\'s Belt)', 'Atutahi (Canopus)', 'Mahutonga (Southern Cross)'],
+      'san-antonio': ['Matariki (Pleiades), high in evening sky, all nine visible', 'Tautoru (Orion\'s Belt), prominent', 'Takurua (Sirius), brightest star, unmistakable', 'Puanga (Rigel), blue-white near Tautoru', 'Whānui (Vega), low on northern horizon'],
+    },
+    starNote: {
+      'san-antonio': 'From San Antonio, Matariki sits high overhead in your December sky, far more prominent than from Aotearoa where it hugs the horizon at dawn. Mahutonga (Southern Cross) isn\'t visible from this latitude.',
+    },
+  },
+  {
+    id: 'hongongoi',
+    name: 'Hōngongoi',
+    aotearoaGregorian: 'July – August',
+    aotearoaSeason: 'Mid Winter (Hōtoke)',
+    seasonType: 'Mid Winter',
+    meaning: "The earth is very cold and hard",
+    description: "The deepest point of winter. Energy is conserved, the community draws close. This is the season for inner work: learning, creating, storytelling, making. The arts flourish when the land rests.",
+    whakataukī: "He aha te mea nui o te ao? He tangata, he tangata, he tangata",
+    whakataukīTranslation: "What is the greatest thing in the world? It is people, it is people, it is people",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Earth is dormant (no planting)', 'Maintain food stores', 'Gather winter greens', 'Prepare seed for spring'] },
+      { title: 'Water & Hunting', items: ['Tuna (eel) season continues', 'Fish on Tangaroa and Rākaunui nights', 'Set hīnaki in estuaries', 'Bird snaring in forests'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Coldest month; protect tender plants from hard freezes', 'Prune dormant fruit trees (peach, plum, fig)', 'Plant bare-root fruit trees and roses', 'Prepare and amend soil for spring'] },
+        { title: 'Water & Gathering', items: ['Winter bass fishing, slow jigs in deep water', 'Crappie fishing peaks in cool reservoirs', 'Citrus harvest from Valley-influenced areas', 'Gather dried mesquite pods for flour'] },
+        { title: 'Local Ecology', items: ['Ice storms possible, the most vulnerable period', 'Sandhill cranes wintering nearby', 'Great time for birdwatching at Mitchell Lake', 'Indoor arts: weaving, beadwork, fibre crafts'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Matariki (established in pre-dawn sky)', 'Takurua (Sirius), dominant', 'Tautoru', 'Rehua (Antares), low', 'Mahutonga'],
+      'san-antonio': ['Takurua (Sirius), blazing overhead, peak prominence', 'Matariki (Pleiades), high and clear', 'Tautoru (Orion\'s Belt), crossing meridian', 'Puanga (Rigel), bright blue-white', 'Whakaahu (Castor & Pollux), high east'],
+    },
+    starNote: { 'san-antonio': 'Takurua (Sirius) dominates your January sky, fitting for the coldest month. Its brilliance from San Antonio is striking.' },
+  },
+  {
+    id: 'hereturikoka',
+    name: 'Here-turi-kōkā',
+    aotearoaGregorian: 'August – September',
+    aotearoaSeason: 'Late Winter (Hōtoke)',
+    seasonType: 'Late Winter',
+    meaning: "Vegetation beginning to spring up from the earth",
+    description: "The threshold between cold and warmth. First stirrings of renewal. The earth isn't yet warm, but the promise is visible: early shoots, returning birds, longer light, softening soil.",
+    whakataukī: "Ahakoa he iti, he pounamu",
+    whakataukīTranslation: "Although it is small, it is precious (like greenstone)",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Early soil preparation', 'Clear garden plots', 'First tentative plantings', 'Gather early spring greens'] },
+      { title: 'Water & Hunting', items: ['Coastal fishing improves', 'Whitebait runs may begin', 'Continue tuna harvesting', 'Check bird snaring grounds'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['First wildflowers push through; agarita blooms', 'Start warm-season seedlings indoors (tomatoes, peppers)', 'Last chance for cool-season crops', 'Fruit trees beginning to blossom (peach, plum)'] },
+        { title: 'Water & Gathering', items: ['White bass spawning runs begin in rivers', 'Bass moving shallow, good bank fishing', 'Gather agarita berries for jelly', 'Wild onions appearing along creek banks'] },
+        { title: 'Local Ecology', items: ['Hummingbirds returning, set feeders', 'Mexican free-tailed bats emerging at Bracken Cave', 'Purple martin scouts arriving', 'Days lengthening noticeably; energy shifts'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Matariki (setting west)', 'Rehua (Antares), rising', 'Whakaahu (Castor & Pollux)', 'Whānui (Vega), high'],
+      'san-antonio': ['Whakaahu (Castor & Pollux), high overhead', 'Takurua (Sirius), still bright, moving west', 'Rehua (Antares), rising in the east late evening', 'Whānui (Vega), appearing in north-east pre-dawn'],
+    },
+    starNote: { 'san-antonio': 'Watch for Rehua (Antares) appearing in the east. The star of summer and healing rises as your land begins to warm.' },
+  },
+  {
+    id: 'mahuru',
+    name: 'Mahuru',
+    aotearoaGregorian: 'September – October',
+    aotearoaSeason: 'Early Spring (Koanga)',
+    seasonType: 'Early Spring',
+    meaning: "The earth has regained its warmth",
+    description: "True spring. Life returns vigorously. The garden season begins in earnest, guided by the stars. Energy rises, days lengthen, the land invites you outside.",
+    whakataukī: "Kia mau ki te aka matua, kei mau ki te aka tāepa",
+    whakataukīTranslation: "Cling to the main vine, not the loose one",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Kūmara planting begins (guided by Whānui)', 'Plant taro, hue, uwhi', 'Gather spring greens and shoots', 'Forest gardens tended'] },
+      { title: 'Water & Hunting', items: ['Inanga (whitebait) runs peak', 'Coastal fishing active', 'Shellfish gathering resumes', 'Freshwater fisheries productive'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Spring equinox, plant everything: tomatoes, peppers, squash, beans', 'Texas wildflower peak: bluebonnets, Indian paintbrush, winecups', 'Plant herbs: basil, cilantro, oregano, rosemary', 'Native milkweed for monarchs; plant now'] },
+        { title: 'Water & Gathering', items: ['White bass runs in full swing, Guadalupe River', 'Largemouth bass spawning, sight fishing', 'Gather dewberries along fence lines', 'Prickly pear pads (nopalitos) at their best'] },
+        { title: 'Local Ecology', items: ['Peak birdsong; golden-cheeked warblers nesting', 'Rattlesnakes active, watch your step in gardens', 'Monarch butterflies passing through', 'This is your most alive month. Be outside'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Rehua (Antares), prominent', 'Whānui (Vega), high, signals kūmara planting', 'Mahutonga', 'Atutahi'],
+      'san-antonio': ['Rehua (Antares), rising prominently in the south-east', 'Whānui (Vega), climbing in the north-east', 'Mahutonga (Southern Cross), not visible from this latitude', 'Atutahi (Canopus), not visible'],
+    },
+    starNote: { 'san-antonio': 'As in Aotearoa, watch for Whānui (Vega) rising. It signals planting time. From San Antonio, Rehua (Antares) also rises to guide your spring garden.' },
+  },
+  {
+    id: 'whiringanuku',
+    name: 'Whiringa-ā-nuku',
+    aotearoaGregorian: 'October – November',
+    aotearoaSeason: 'Mid Spring (Koanga)',
+    seasonType: 'Mid Spring',
+    meaning: "The turning of the earth toward warmth",
+    description: "Warmth builds. Gardens are thriving, the land is generous. Activity peaks before the heat of summer arrives.",
+    whakataukī: "Mā te huruhuru ka rere te manu",
+    whakataukīTranslation: "With feathers, the bird can fly",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Main kūmara planting', 'Tend growing crops', 'Gather ripening berries', 'Rongoā plants abundant'] },
+      { title: 'Water & Hunting', items: ['Open ocean fishing', 'Shellfish plentiful', 'Net fishing in harbours', 'Rivers productive'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Harvest cool-season crops before heat kills them', 'Plant okra, southern peas, sweet potatoes, melons', 'Tomatoes and peppers setting fruit heavily', 'Last comfortable gardening weeks before summer'] },
+        { title: 'Water & Gathering', items: ['Bass fishing excellent, topwater at dawn', 'Catfish moving to shallows', 'Gather dewberries, mulberries, wild plums', 'Prickly pear flowers for jelly'] },
+        { title: 'Local Ecology', items: ['Scissor-tailed flycatchers nesting', 'Fireflies appearing in the evenings', 'Mesquite in full leaf, summer shade forming', 'Heat building; shift outdoor work to mornings'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Rehua (Antares), high', 'Scorpius prominent', 'Mahutonga', 'Whānui (Vega), setting'],
+      'san-antonio': ['Rehua (Antares), climbing high in the south', 'Scorpius, fully visible and dramatic', 'Whānui (Vega), high overhead', 'Takurua (Sirius), gone from evening sky'],
+    },
+    starNote: { 'san-antonio': 'Rehua dominates your southern sky, the star of summer and abundance. Scorpius sprawls across the horizon. You\'re entering the hot months.' },
+  },
+  {
+    id: 'whiringarangi',
+    name: 'Whiringa-ā-rangi',
+    aotearoaGregorian: 'November – December',
+    aotearoaSeason: 'Late Spring (Koanga)',
+    seasonType: 'Late Spring',
+    meaning: "The turning of the sky, the sun at its turning point",
+    description: "The sun reaches its extreme. The longest days approach. Full energy, full light, but also the beginning of intensity.",
+    whakataukī: "E kore e taea te whenu kotahi ki te raranga i te whāriki",
+    whakataukīTranslation: "The tapestry of understanding can't be woven by one strand alone",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Crops growing strongly', 'Harvest early-maturing plants', 'Berries and fruits abundant', 'Kaimoana at its best'] },
+      { title: 'Water & Hunting', items: ['Deep sea fishing', 'Hāpuku and reef fish', 'Crayfish season', 'Fish preservation'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Summer solstice, longest day, peak sun energy', 'Harvest tomatoes, peppers, squash before peak heat', 'Plant heat-lovers: okra, black-eyed peas, yard-long beans', 'Shade cloth on vulnerable plants'] },
+        { title: 'Water & Gathering', items: ['Catfish season, trotlines and jug fishing', 'Night fishing to avoid heat', 'Harvest peaches from Hill Country orchards', 'Gather mesquite beans for flour and jelly'] },
+        { title: 'Local Ecology', items: ['Triple-digit heat beginning (100°F+)', 'Shift all work to dawn and dusk', 'Cicadas singing, the voice of summer', 'Mexican free-tailed bats at peak colony size, Bracken Cave'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Rehua (Antares), dominant', 'Mahutonga, low south', 'Takurua (Sirius), beginning to rise'],
+      'san-antonio': ['Rehua (Antares), at zenith in the south', 'Scorpius, magnificent, fully overhead', 'Whānui (Vega), directly overhead', 'Milky Way (Te Ikaroa), stunning from dark skies south of the city'],
+    },
+    starNote: { 'san-antonio': 'Step outside at midnight in June and look up. Rehua sits high in the south and Whānui directly overhead. The Milky Way (Te Ikaroa / Mangōroa) pours across the sky from horizon to horizon.' },
+  },
+  {
+    id: 'hakihea',
+    name: 'Hakihea',
+    aotearoaGregorian: 'December – January',
+    aotearoaSeason: 'Early Summer (Raumati)',
+    seasonType: 'Early Summer',
+    meaning: "Birds are sitting on their eggs",
+    description: "Peak summer energy. The land is at its most generous, but also its most demanding. Work with the heat, not against it.",
+    whakataukī: "He manako te kōura i kore ai",
+    whakataukīTranslation: "Wishing for crayfish won't bring them. You must go and get them",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Crops in full growth', 'Harvest early kūmara', 'Berries and fruits at peak', 'Gather harakeke'] },
+      { title: 'Water & Hunting', items: ['Peak ocean fishing', 'Shark fishing expeditions', 'Kōura abundant', 'Kaimoana preservation'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Brutal heat, survival gardening', 'Water deeply and infrequently', 'Harvest figs, blackberries, watermelons', 'Plant a fall garden mid-month: tomatoes, peppers indoors'] },
+        { title: 'Water & Gathering', items: ['Night catfishing on the rivers', 'Bass deep in structure, early morning only', 'Gather prickly pear tunas (fruit); handle with tongs', 'Make sun tea, dry herbs'] },
+        { title: 'Local Ecology', items: ['Peak heat; honour the fierceness of summer', 'Roadrunners and horned lizards thriving', 'Thunderstorms possible, watch for flash floods', 'This is endurance season. Pace yourself'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Rehua, past zenith', 'Takurua, rising prominently', 'Tautoru, rising', 'Atutahi'],
+      'san-antonio': ['Rehua (Antares), moving west', 'Scorpius setting earlier', 'Whānui (Vega), still overhead', 'Milky Way, best viewing month from dark locations'],
+    },
+    starNote: { 'san-antonio': 'The Milky Way is at its best in July/August from South Texas. Drive 30 minutes from city lights and Te Ikaroa (the Long Fish) stretches from horizon to horizon.' },
+  },
+  {
+    id: 'kohitatea',
+    name: 'Kohītātea',
+    aotearoaGregorian: 'January – February',
+    aotearoaSeason: 'Mid Summer (Raumati)',
+    seasonType: 'Mid Summer',
+    meaning: "The pale colour of maturing vegetation, fruits ripening",
+    description: "The harvest of summer's intensity. What has survived the heat now offers its fruit. Preserve what the land gives, and prepare for the turn.",
+    whakataukī: "Nāu te rourou, nāku te rourou, ka ora ai te iwi",
+    whakataukīTranslation: "With your food basket and my food basket, the people will thrive",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Main harvest season for kūmara', 'Preserve root crops', 'Gather and dry berries', 'Karaka berries processed'] },
+      { title: 'Water & Hunting', items: ['Ocean fishing strong', 'Net large catches', 'Dry and smoke fish', 'Coastal foraging excellent'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Fall garden planting: tomatoes, peppers, squash, beans', 'Plant cool-season seedlings for autumn harvest', 'Harvest final summer crops', 'Preserve: can tomatoes, make pepper sauces, dry herbs'] },
+        { title: 'Water & Gathering', items: ['Dove season opens September 1, important food harvest', 'Catfish still active', 'Green pecan harvest for preserving', 'Gather late-season prickly pear'] },
+        { title: 'Local Ecology', items: ['Heat beginning to ease (barely)', 'Hurricane season awareness (Gulf influence)', 'Monarch butterflies returning southward', 'The land exhales slightly; relief approaching'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Takurua, dominant overhead', 'Tautoru, high', 'Puanga', 'Whakaahu'],
+      'san-antonio': ['Whānui (Vega), still high', 'Rehua (Antares), setting in south-west', 'Matariki (Pleiades), first pre-dawn appearance on eastern horizon', 'Tautoru (Orion\'s Belt), appearing in pre-dawn sky'],
+    },
+    starNote: { 'san-antonio': 'Watch the eastern horizon before dawn in late August. Matariki and Tautoru begin their return. The wheel turns.' },
+  },
+  {
+    id: 'huitanguru',
+    name: 'Hui-tanguru',
+    aotearoaGregorian: 'February – March',
+    aotearoaSeason: 'Late Summer (Raumati)',
+    seasonType: 'Late Summer',
+    meaning: "The assembling together, the gathering in of the harvest",
+    description: "The gathering in. What the land has provided is collected, preserved, stored. Warmth lingers but the shift is coming. A time to take stock.",
+    whakataukī: "He kai kei aku ringa",
+    whakataukīTranslation: "There is food at the end of my hands. I am self-sufficient",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Final harvest', 'Store kūmara in rua', 'Preserve and dry foods', 'Gather materials for winter crafts'] },
+      { title: 'Water & Hunting', items: ['Strong fishing continues', 'Intensive fish preservation', 'Shellfish gathering', 'Begin eel trapping preparation'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Fall garden in full production', 'Harvest fall tomatoes, peppers, squash', 'Plant cool-season crops: broccoli, cauliflower, Brussels sprouts', 'Pecan trees dropping; major harvest begins'] },
+        { title: 'Water & Gathering', items: ['Bass fishing resurgent in cooler water', 'Dove season continues', 'Gather pecans, the great South Texas harvest', 'Forage for autumn mushrooms after rain'] },
+        { title: 'Local Ecology', items: ['First cool fronts arriving ("northers")', 'Hawks migrating through, watch the skies', 'Monarch butterflies at peak migration', 'The relief of autumn; energy returns'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Takurua, past zenith', 'Atutahi, prominent', 'Mahutonga, rising', 'Whakaahu, high'],
+      'san-antonio': ['Matariki (Pleiades), rising in evening sky', 'Tautoru (Orion\'s Belt), appearing east', 'Takurua (Sirius), rising late evening', 'Whānui (Vega), lower in west'],
+    },
+    starNote: { 'san-antonio': 'Matariki returns to your evening sky in September/October. As the air cools, the winter stars begin their procession back. The cycle turning.' },
+  },
+  {
+    id: 'poututerangi',
+    name: 'Poutū-te-rangi',
+    aotearoaGregorian: 'March – April',
+    aotearoaSeason: 'Early Autumn (Ngahuru)',
+    seasonType: 'Early Autumn',
+    meaning: "The pillar of the sky, the autumn equinox",
+    description: "Day and night in balance. The pillar that holds the sky. A time of equilibrium and completion. The harvest is done; what remains is gratitude.",
+    whakataukī: "Whāia te iti kahurangi; ki te tūohu koe, me he maunga teitei",
+    whakataukīTranslation: "Seek the treasure you value most; if you bow your head, let it be to a lofty mountain",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['All crops harvested and stored', 'Garden areas rested', 'Gather autumn foods', 'Collect seeds for next season'] },
+      { title: 'Water & Hunting', items: ['Tuna migration, prime trapping', 'Hīnaki set', 'Pātiki season', 'Bird snaring preparations'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Autumn equinox, the balance point', 'Peak cool-season planting: greens, root vegetables, herbs', 'Harvest remaining warm-season crops', 'Plant wildflower seeds for spring bloom'] },
+        { title: 'Water & Gathering', items: ['Peak pecan harvest; gather and process', 'Bass fishing excellent in cooling water', 'Deer season opens, venison for winter stores', 'Gather native grasses for weaving and arrangements'] },
+        { title: 'Local Ecology', items: ['Days and nights equal', 'First hard frosts possible by month\'s end', 'Deciduous trees turning: bald cypress gold, oaks russet', 'Sandhill cranes arriving at nearby lakes'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Mahutonga, high south', 'Atutahi, prominent', 'Takurua, setting', 'Rehua, low east'],
+      'san-antonio': ['Matariki (Pleiades), high and clear', 'Tautoru (Orion\'s Belt), prominent east', 'Takurua (Sirius), blazing in the south-east', 'Puanga (Rigel), brilliant blue-white'],
+    },
+    starNote: { 'san-antonio': 'The great winter constellations are returning in force: Matariki, Tautoru, Takurua, Puanga. The sky mirrors the land. The cycle is completing.' },
+  },
+  {
+    id: 'paengawhawha',
+    name: 'Paenga-whāwhā',
+    aotearoaGregorian: 'April – May',
+    aotearoaSeason: 'Mid Autumn (Ngahuru)',
+    seasonType: 'Mid Autumn',
+    meaning: "Dried stems and stalks left in the gardens after harvest",
+    description: "The landscape quiets. What was growing is now gathered. The dried stalks stand as testimony to the season's work. Preparation for winter deepens.",
+    whakataukī: "Kia hora te marino, kia whakapapa pounamu te moana",
+    whakataukīTranslation: "May peace be widespread, may the sea glisten like greenstone",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Gardens fully at rest', 'Check food stores', 'Gather remaining wild foods', 'Collect firewood'] },
+      { title: 'Water & Hunting', items: ['Prime tuna season', 'Lamprey runs', 'Kererū snaring', 'Preserve all catches'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Harvest cool-season crops: greens, broccoli, root veg', 'Plant garlic cloves for next year', 'Clear spent warm-season beds', 'Compost and prepare soil for rest'] },
+        { title: 'Water & Gathering', items: ['Deer season continues, fill the freezer', 'Bass fishing strong in cooling water', 'Final pecan gleaning', 'Gather dried grasses and seed heads for craft work'] },
+        { title: 'Local Ecology', items: ['First hard freezes likely', 'Live oaks dropping leaves and regrowing simultaneously', 'Wintering birds settled: kestrels, sparrows, wrens', 'Drawing inward; prepare for community gathering season'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Mahutonga, prominent', 'Atutahi', 'Rehua, rising east', 'Whānui, rising'],
+      'san-antonio': ['Matariki (Pleiades), near zenith', 'Takurua (Sirius), dominant, peak brightness', 'Tautoru (Orion\'s Belt), high overhead', 'Puanga (Rigel), brilliant'],
+    },
+    starNote: { 'san-antonio': 'Takurua (Sirius) reaches its peak now, the brightest star blazing directly south. The winter sky in South Texas is stunning and clear.' },
+  },
+  {
+    id: 'haratua',
+    name: 'Haratua',
+    aotearoaGregorian: 'May – June',
+    aotearoaSeason: 'Late Autumn (Ngahuru)',
+    seasonType: 'Late Autumn',
+    meaning: "The final month before the new year",
+    description: "The last month of the cycle. Anticipation builds. Food stores are checked, the community looks to the sky for the signs. The rising of Matariki will begin everything again.",
+    whakataukī: "E hara taku toa i te toa takitahi, engari he toa takitini",
+    whakataukīTranslation: "My strength isn't mine alone. It is the strength of many",
+    aotearoaActivities: [
+      { title: 'Land & Gathering', items: ['Final firewood gathering', 'Check and reinforce food stores', 'Rongoā collection', 'Earth fully at rest'] },
+      { title: 'Water & Hunting', items: ['Late tuna runs', 'Coastal fishing on calm days', 'Final fish smoking/drying', 'Kererū season continues'] },
+    ],
+    localActivities: {
+      'san-antonio': [
+        { title: 'Land & Growing', items: ['Last cool-season harvests', 'Plant winter cover crops', 'Prepare seed orders for spring', 'Rest and reflect on the year\'s garden'] },
+        { title: 'Water & Gathering', items: ['Winter bass, deep and slow', 'Trout stocking begins in rivers', 'Gather dried native materials for winter crafts', 'Stock the pantry: preserves, dried goods, frozen harvest'] },
+        { title: 'Local Ecology', items: ['Watch the pre-dawn sky for Matariki\'s return', 'Shortest days approaching; honour the darkness', 'Community gathering season: Thanksgiving, solstice', 'The cycle prepares to turn. Set your intentions'] },
+      ],
+    },
+    stars: {
+      aotearoa: ['Whānui, high', 'Mahutonga', 'Takurua, rising', 'Tautoru, rising', 'Matariki, approaching heliacal rising'],
+      'san-antonio': ['Matariki (Pleiades), setting earlier each night, moving west', 'Takurua (Sirius), still bright but westering', 'Whānui (Vega), low north, barely visible', 'Rehua (Antares), first appearance in pre-dawn east'],
+    },
+    starNote: { 'san-antonio': 'As Matariki begins to set earlier in the evening, the cycle is closing. Soon it will disappear into the sun\'s light and re-emerge to mark your new year. Watch, and prepare.' },
+  },
+];
+
+let currentLocation = 'san-antonio';
+let currentMonthIndex = 0;
+
+function getLocalGregorian(monthIndex, location) {
+  const loc = locations[location];
+  const shift = loc.monthShift;
+  const baseMonths = [
+    [5,6],[6,7],[7,8],[8,9],[9,10],[10,11],[11,0],[0,1],[1,2],[2,3],[3,4],[4,5]
+  ];
+  const shifted = baseMonths[monthIndex].map(m => (m + shift) % 12);
+  return `${gregorianMonths[shifted[0]]} – ${gregorianMonths[shifted[1]]}`;
+}
+
+function getLocalSeason(seasonType, location) {
+  const loc = locations[location];
+  if (loc.hemisphere === 'south') return seasonType;
+  return seasonType;
+}
+
+function changeLocation(locId) {
+  currentLocation = locId;
+  document.getElementById('locationInfo').textContent = locations[locId].info;
+  renderNav();
+  renderMonth(currentMonthIndex);
+}
+
+function renderNav() {
+  const nav = document.getElementById('monthNav');
+  const loc = locations[currentLocation];
+  nav.innerHTML = months.map((m, i) => {
+    const localDates = getLocalGregorian(i, currentLocation);
+    return `<button class="${i === currentMonthIndex ? 'active' : ''}" onclick="selectMonth(${i})">
+      ${m.name}
+      <span class="nav-local">${currentLocation !== 'aotearoa' ? localDates : m.aotearoaGregorian}</span>
+    </button>`;
+  }).join('');
+}
+
+function selectMonth(index) {
+  currentMonthIndex = index;
+  renderNav();
+  renderMonth(index);
+  window.scrollTo({ top: document.getElementById('mainContent').offsetTop - 80, behavior: 'smooth' });
+}
+
+function renderMonth(index) {
+  const m = months[index];
+  const loc = locations[currentLocation];
+  const localGregorian = getLocalGregorian(index, currentLocation);
+  const isLocal = currentLocation !== 'aotearoa';
+
+  const localActs = m.localActivities[currentLocation] || m.localActivities['san-antonio'] || [];
+  const localStars = m.stars[currentLocation] || m.stars['san-antonio'] || [];
+  const aotearoaStars = m.stars.aotearoa || [];
+  const starNote = (m.starNote && m.starNote[currentLocation]) || '';
+
+  let html = `<section class="month-section active">
+    <div class="month-header">
+      <h2>${m.name}</h2>
+      <p class="description">${m.description}</p>
+      <p class="whakataukī">"${m.whakataukī}"</p>
+      <p class="whakataukī-translation">${m.whakataukīTranslation}</p>
+    </div>`;
+
+  if (isLocal) {
+    html += `
+    <div class="comparison-strip">
+      <div class="comparison-side aotearoa">
+        <div class="comp-label">Te Whenua Tūturu · Aotearoa</div>
+        <div class="comp-dates">${m.aotearoaGregorian}</div>
+        <div class="comp-season">${m.aotearoaSeason}</div>
+      </div>
+      <div class="comparison-side local">
+        <div class="comp-label">Your Land · ${loc.name}</div>
+        <div class="comp-dates">${localGregorian}</div>
+        <div class="comp-season">${m.seasonType} · ${loc.lat > 0 ? 'Northern' : 'Southern'} Hemisphere</div>
+      </div>
+    </div>`;
+  }
+
+  html += `
+    <div class="relational-note">
+      <strong>${m.name}</strong>: "${m.meaning}"${isLocal ? `. In Aotearoa this falls in ${m.aotearoaGregorian}. On your land in ${loc.name}, the same seasonal energy aligns with <strong>${localGregorian}</strong>.` : `. ${m.aotearoaGregorian} · ${m.aotearoaSeason}.`}
+      ${isLocal ? ' The lunar nights (Whiro through Tireo) follow the moon wherever you are; that cycle is universal. What shifts is the season and the stars above, the work of the land and the way it responds.' : ''}
+    </div>`;
+
+  // Star section
+  html += `<div class="star-map-container">
+    <h3>Stars Visible: ${m.name}${isLocal ? ` from ${loc.name}` : ''}</h3>
+    ${renderStarMapSVG(index, currentLocation)}
+    ${starNote ? `<p class="star-visibility-note">${starNote}</p>` : ''}
+    <div class="star-legend">
+      <div class="star-legend-item"><div class="dot" style="background:#f0c850"></div> Matariki (Pleiades)</div>
+      <div class="star-legend-item"><div class="dot" style="background:#f0a868"></div> Rehua (Antares)</div>
+      <div class="star-legend-item"><div class="dot" style="background:#e8e4f0"></div> Other bright stars</div>
+      ${!loc.canSeeSouthernCross && isLocal ? '<div class="star-legend-item"><div class="dot" style="background:#a05040"></div> Not visible from your latitude</div>' : ''}
+    </div>
+  </div>`;
+
+  // Stars info cards
+  html += `<div class="stars-info">`;
+  const starList = isLocal ? localStars : aotearoaStars;
+  starList.forEach(s => {
+    html += `<div class="star-card">
+      <div class="star-desc" style="font-size:0.85rem;">${s}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Activities
+  if (isLocal) {
+    html += `
+    <div class="activities-dual" style="margin-top:2rem;">
+      <div class="activities-column local-col">
+        <h3>On Your Land · ${loc.name}</h3>
+        <div class="activities-grid">
+          ${localActs.map(a => `
+            <div class="activity-card">
+              <h4>${a.title}</h4>
+              <ul>${a.items.map(i => `<li>${i}</li>`).join('')}</ul>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="activities-column aotearoa-col">
+        <h3>Te Whenua Tūturu · Aotearoa</h3>
+        <div class="activities-grid">
+          ${m.aotearoaActivities.map(a => `
+            <div class="activity-card">
+              <h4>${a.title}</h4>
+              <ul>${a.items.map(i => `<li>${i}</li>`).join('')}</ul>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+  } else {
+    html += `<div style="margin-top:2rem;">
+      <div class="activities-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;">
+        ${m.aotearoaActivities.map(a => `
+          <div class="activity-card">
+            <h4>${a.title}</h4>
+            <ul>${a.items.map(i => `<li>${i}</li>`).join('')}</ul>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }
+
+  html += `</section>`;
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function renderStarMapSVG(monthIndex, location) {
+  const loc = locations[location];
+  const isNorth = loc.hemisphere === 'north';
+  const canSeeCross = loc.canSeeSouthernCross;
+
+  const starPositions = getStarPositions(monthIndex, location);
+
+  let svg = `<svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="skyG" cx="50%" cy="50%" r="70%">
+        <stop offset="0%" stop-color="#0d1225"/>
+        <stop offset="100%" stop-color="#060810"/>
+      </radialGradient>
+      <radialGradient id="matGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#f0c850" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#f0c850" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="gl"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glB"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect width="700" height="400" fill="url(#skyG)"/>
+    <!-- Milky Way -->
+    <ellipse cx="350" cy="200" rx="340" ry="55" fill="none" stroke="rgba(180,180,220,0.035)" stroke-width="75" transform="rotate(${-15 + monthIndex * 3} 350 200)"/>
+    <!-- Horizon -->
+    <line x1="0" y1="375" x2="700" y2="375" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <text x="350" y="395" text-anchor="middle" fill="rgba(255,255,255,0.12)" font-size="9" font-family="Inter">— horizon —</text>`;
+
+  // Background stars
+  const bgStars = [[45,80],[120,45],[290,60],[450,40],[530,75],[600,50],[80,200],[500,180],[310,240],[650,130],[180,300],[400,120],[560,200],[100,330],[250,150]];
+  bgStars.forEach(([x,y]) => {
+    svg += `<circle cx="${x}" cy="${y}" r="${0.5 + Math.random()*0.4}" fill="#c8c4d4" opacity="${0.2 + Math.random()*0.15}"/>`;
+  });
+
+  // Render each star
+  starPositions.forEach(star => {
+    if (star.type === 'matariki') {
+      svg += `<circle cx="${star.x}" cy="${star.y}" r="12" fill="url(#matGlow)" opacity="${star.opacity * 0.5}"/>`;
+      const offsets = [[-2,-5],[6,0],[-8,-2],[4,7],[-4,5],[8,-5],[-10,-4],[2,-8],[6,4]];
+      offsets.forEach(([dx,dy], i) => {
+        const r = 2.2 - i * 0.12;
+        svg += `<circle cx="${star.x+dx}" cy="${star.y+dy}" r="${Math.max(r,0.8)}" fill="#f0c850" filter="url(#gl)" opacity="${star.opacity}"/>`;
+      });
+      svg += `<text x="${star.x}" y="${star.y + 22}" text-anchor="middle" fill="#f0c850" font-size="10" font-family="Playfair Display" font-style="italic" opacity="${star.opacity}">Matariki</text>`;
+    } else if (star.type === 'tautoru') {
+      for (let i = 0; i < 3; i++) {
+        svg += `<circle cx="${star.x + i*15}" cy="${star.y - i*5}" r="1.8" fill="#e8e4f0" filter="url(#gl)" opacity="${star.opacity}"/>`;
+      }
+      svg += `<text x="${star.x+15}" y="${star.y - 18}" text-anchor="middle" fill="#e8e4f0" font-size="8" font-family="Inter" opacity="${star.opacity * 0.7}">Tautoru</text>`;
+    } else if (star.type === 'cross' && !canSeeCross) {
+      // Don't render
+    } else {
+      const color = star.color || '#e8e4f0';
+      svg += `<circle cx="${star.x}" cy="${star.y}" r="${star.r || 2.5}" fill="${color}" filter="url(#${star.bright ? 'glB' : 'gl'})" opacity="${star.opacity}"/>`;
+      svg += `<text x="${star.x}" y="${star.y + (star.labelBelow !== false ? 18 : -10)}" text-anchor="middle" fill="${color}" font-size="${star.fontSize || 9}" font-family="Inter" opacity="${star.opacity * 0.8}">${star.label}</text>`;
+    }
+  });
+
+  svg += `</svg>`;
+  return svg;
+}
+
+function getStarPositions(monthIndex, location) {
+  const loc = locations[location];
+  const isNorth = loc.hemisphere === 'north';
+  const shifted = isNorth ? (monthIndex + 6) % 12 : monthIndex;
+
+  const matarikiCycle = [
+    {x:280,y:290,o:1},{x:350,y:200,o:1},{x:150,y:320,o:0.6},{x:600,y:340,o:0.2},
+    {x:600,y:340,o:0.1},{x:600,y:340,o:0.05},{x:600,y:340,o:0.0},{x:600,y:340,o:0.0},
+    {x:600,y:340,o:0.3},{x:350,y:200,o:0.7},{x:300,y:120,o:1},{x:200,y:280,o:0.8}
+  ];
+
+  const takuruaCycle = [
+    {x:140,y:170,o:1},{x:250,y:140,o:1},{x:350,y:280,o:0.6},{x:550,y:350,o:0.3},
+    {x:600,y:360,o:0.1},{x:650,y:360,o:0.0},{x:550,y:200,o:0.5},{x:350,y:100,o:1},
+    {x:250,y:100,o:1},{x:100,y:280,o:0.5},{x:550,y:300,o:0.5},{x:350,y:150,o:0.8}
+  ];
+
+  const rehuaCycle = [
+    {x:600,y:340,o:0.3},{x:600,y:340,o:0.4},{x:520,y:250,o:0.7},{x:400,y:150,o:1},
+    {x:350,y:100,o:1},{x:300,y:80,o:1},{x:200,y:100,o:0.8},{x:300,y:200,o:0.5},
+    {x:400,y:300,o:0.3},{x:600,y:320,o:0.4},{x:550,y:280,o:0.6},{x:600,y:340,o:0.3}
+  ];
+
+  const whanauiCycle = [
+    {x:500,y:100,o:0.7},{x:550,y:80,o:0.7},{x:450,y:70,o:0.8},{x:350,y:80,o:0.9},
+    {x:150,y:300,o:0.4},{x:100,y:350,o:0.1},{x:500,y:350,o:0.1},{x:450,y:100,o:0.6},
+    {x:350,y:80,o:0.8},{x:300,y:100,o:0.7},{x:500,y:200,o:0.5},{x:600,y:250,o:0.5}
+  ];
+
+  const idx = isNorth ? shifted : monthIndex;
+
+  const stars = [];
+
+  // Matariki
+  const mat = matarikiCycle[idx];
+  if (mat.o > 0.05) stars.push({ type: 'matariki', x: mat.x, y: mat.y, opacity: mat.o });
+
+  // Takurua (Sirius)
+  const tak = takuruaCycle[idx];
+  if (tak.o > 0.05) stars.push({ type: 'star', x: tak.x, y: tak.y, opacity: tak.o, r: 3, color: '#e8e4f0', label: 'Takurua', bright: true });
+
+  // Tautoru (Orion's Belt) — follows Takurua roughly
+  if (tak.o > 0.2) stars.push({ type: 'tautoru', x: tak.x - 60, y: tak.y + 40, opacity: Math.min(tak.o, 0.9) });
+
+  // Puanga (Rigel) — near Tautoru
+  if (tak.o > 0.3) stars.push({ type: 'star', x: tak.x - 40, y: tak.y + 60, opacity: tak.o * 0.8, r: 2.5, color: '#a8c8f0', label: 'Puanga' });
+
+  // Rehua (Antares)
+  const reh = rehuaCycle[idx];
+  if (reh.o > 0.1) stars.push({ type: 'star', x: reh.x, y: reh.y, opacity: reh.o, r: 3, color: '#f0a868', label: 'Rehua', bright: true });
+
+  // Whānui (Vega)
+  const wha = whanauiCycle[idx];
+  if (wha.o > 0.1) stars.push({ type: 'star', x: wha.x, y: wha.y, opacity: wha.o, r: 2.5, color: '#e8e4f0', label: 'Whānui' });
+
+  // Whakaahu (Castor & Pollux) — visible when Tautoru is up
+  if (tak.o > 0.4) {
+    stars.push({ type: 'star', x: tak.x + 100, y: tak.y - 30, opacity: tak.o * 0.6, r: 1.8, color: '#e8e4f0', label: 'Whakaahu', fontSize: 8 });
+  }
+
+  // Atutahi (Canopus) — only if visible from location
+  if (loc.canSeeCanopus === true) {
+    const atIdx = (idx + 2) % 12;
+    const atPositions = [{x:90,y:250},{x:150,y:150},{x:200,y:120},{x:620,y:300},{x:580,y:320},{x:600,y:320},{x:450,y:150},{x:200,y:120},{x:150,y:150},{x:200,y:120},{x:180,y:100},{x:150,y:130}];
+    const at = atPositions[atIdx];
+    stars.push({ type: 'star', x: at.x, y: at.y, opacity: 0.7, r: 2.2, color: '#f0e8d0', label: 'Atutahi' });
+  }
+
+  // Mahutonga (Southern Cross) — only if visible
+  if (loc.canSeeSouthernCross) {
+    const crossPositions = [{x:60,y:150},{x:108,y:190},{x:350,y:340},{x:550,y:250},{x:500,y:280},{x:400,y:330},{x:380,y:320},{x:500,y:280},{x:505,y:270},{x:350,y:180},{x:300,y:130},{x:250,y:150}];
+    const cp = crossPositions[idx];
+    const pts = [[0,10],[-12,0],[12,0],[0,-10],[0,0]];
+    pts.forEach(([dx,dy]) => {
+      const r = dy === 0 && dx === 0 ? 1.8 : 1.2;
+      stars.push({ type: 'star', x: cp.x+dx, y: cp.y+dy, opacity: 0.6, r: r, color: '#e8e4f0', label: '' });
+    });
+    stars.push({ type: 'star', x: cp.x, y: cp.y + 22, opacity: 0.5, r: 0, color: '#e8e4f0', label: 'Mahutonga', fontSize: 8 });
+  }
+
+  return stars;
+}
+
+// Initialize
+renderNav();
+renderMonth(0);
+</script>
+
+</body>
+</html>
