@@ -1,18 +1,21 @@
 # Portfolio — Françoise Danoy
 
-A collection of small, self-contained web apps I've built to solve real workflow problems.
-Each project is a single HTML file (HTML + CSS + JavaScript), and several use the Claude API.
+A collection of self-contained web apps and live client sites I've built.
 
 **Live site:** https://francoise-0303.github.io/portfolio/
 
-## Projects
-
+## Apps & tools
 | Project | What it does | Live |
 |---|---|---|
-| **Cyclical Time** | A circular, seasonal alternative to the linear calendar — time and tasks as rings. | [open](./cyclical-time/) |
-| **Daily Slack Digest** *(demo)* | Turns noisy Slack threads into a prioritised morning briefing. Shown with sample data. | [open](./slack-digest-demo/) |
+| **Cyclical Time** | A circular, seasonal alternative to the linear calendar. | [open](./cyclical-time/) |
+| **The Mindful Maker Quiz** | Interactive archetype quiz for a fibre-arts brand. | [open](./mindful-maker-quiz/) |
+| **Meeting Task Approval** *(demo)* | Turns meeting notes into editable, selectable tasks. Sample data. | [open](./meeting-task-approval/) |
+| **Daily Slack Digest** *(demo)* | Turns noisy Slack threads into a prioritised morning briefing. Sample data. | [open](./slack-digest-demo/) |
+
+## Live websites
+- [The Practice of Fibre](https://thepracticeoffibre.com)
+- [francoisedanoy.com](https://francoisedanoy.com)
 
 ## Notes
-- The AI-powered apps ask the visitor to paste their own Claude API key, which is stored only
-  in their own browser (`localStorage`) and never committed to this repo.
-- The Slack Digest here uses fictional sample data — no real client or contact information.
+- Demo versions use fictional sample data and contain no real client information.
+- Any email/webhook integrations are disabled in the published copies.

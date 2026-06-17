@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting Task Approval — Demo</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8f9fa;
+    color: #1a1a2e;
+    padding: 16px;
+    font-size: 13px;
+  }
+
+  .header { margin-bottom: 16px; }
+  .header h1 { font-size: 15px; font-weight: 700; color: #1a1a2e; }
+  .header p { color: #6b7280; font-size: 12px; margin-top: 3px; }
+  .demo-tag { display:inline-block; background:#eef2ff; color:#4f46e5; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.06em; padding:2px 8px; border-radius:999px; margin-left:6px; }
+
+  .wins-box {
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .wins-box h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #16a34a; margin-bottom: 8px; }
+  .win-item { display: flex; align-items: flex-start; gap: 6px; font-size: 12px; color: #166534; margin-bottom: 4px; line-height: 1.4; }
+  .win-item:last-child { margin-bottom: 0; }
+  .win-check { flex-shrink: 0; font-size: 13px; }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: #4f46e5; color: white; }
+  .btn-primary:hover { background: #4338ca; }
+  .btn-primary:disabled { background: #a5b4fc; cursor: not-allowed; }
+  .btn-ghost { background: white; color: #374151; border: 1px solid #e5e7eb; }
+  .btn-ghost:hover { background: #f3f4f6; }
+
+  .count-badge { margin-left: auto; font-size: 12px; color: #6b7280; }
+
+  .task-card {
+    background: white;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: border-color 0.15s, opacity 0.15s;
+  }
+  .task-card.approved { border-color: #4f46e5; background: #fafafe; }
+  .task-card.skipped { opacity: 0.42; border-color: #e5e7eb; }
+
+  .checkbox-wrap { padding-top: 2px; flex-shrink: 0; }
+  .checkbox-wrap input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: #4f46e5; }
+
+  .task-body { flex: 1; min-width: 0; }
+  .task-name { font-weight: 600; font-size: 13px; color: #111827; margin-bottom: 6px; line-height: 1.4; }
+
+  .task-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+  .meta-field { display: flex; align-items: center; gap: 4px; }
+  .meta-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  .meta-select, .meta-input {
+    font-size: 11px; border: 1px solid #e5e7eb; border-radius: 5px;
+    padding: 2px 6px; background: #f9fafb; color: #374151; font-family: inherit;
+  }
+  .meta-select:focus, .meta-input:focus { outline: none; border-color: #4f46e5; background: white; }
+
+  .task-desc { font-size: 11px; color: #6b7280; line-height: 1.5; }
+  .task-note { font-size: 10px; color: #f59e0b; font-weight: 600; margin-top: 4px; }
+
+  .section-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #9ca3af; margin: 14px 0 6px;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.visible { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+
+  .modal h2 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .modal .sub { font-size: 12px; color: #6b7280; margin-bottom: 16px; }
+
+  .task-summary-list { margin-bottom: 16px; }
+  .summary-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 12px;
+  }
+  .summary-item:last-child { border-bottom: none; }
+  .summary-person { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; width: 52px; flex-shrink: 0; padding-top: 1px; }
+  .summary-name { flex: 1; font-weight: 500; color: #111827; line-height: 1.4; }
+  .summary-meta { font-size: 11px; color: #6b7280; white-space: nowrap; }
+
+  .go-box {
+    background: #f0f0ff;
+    border: 1.5px solid #c7d2fe;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .go-box p { font-size: 12px; color: #4338ca; margin-bottom: 8px; }
+  .go-word {
+    display: inline-block;
+    background: #4f46e5;
+    color: white;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    padding: 8px 28px;
+    border-radius: 8px;
+  }
+
+  .modal-footer { display: flex; justify-content: flex-end; }
+
+  .skipped-note { font-size: 11px; color: #9ca3af; margin-bottom: 12px; }
+
+  .footer-note { font-size: 11px; color: #9ca3af; margin-top: 14px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📋 Studio Team Meeting — Weekly Sync <span class="demo-tag">demo · sample data</span></h1>
+  <p>Check the tasks you want to create in the project tracker, then click "Review &amp; Confirm".</p>
+</div>
+
+<!-- Wins / Completions from last week -->
+<div class="wins-box">
+  <h3>✅ Completed from last week — close in tracker</h3>
+  <div class="win-item"><span class="win-check">✅</span><span>TrailLife RV marketplace account flag — fully resolved after identity verification (Morgan)</span></div>
+  <div class="win-item"><span class="win-check">✅</span><span>Lakeside store out-of-stock automation — built and live (Morgan)</span></div>
+  <div class="win-item"><span class="win-check">✅</span><span>Founder's short-form videos — all written and scheduled (Maya)</span></div>
+  <div class="win-item"><span class="win-check">✅</span><span>Cedar Fulfillment follow-up meeting — attended (Devin)</span></div>
+  <div class="win-item"><span class="win-check">✅</span><span>ClipFlow account setup — Maya created account, Devin entered card (resolved live in meeting)</span></div>
+  <div class="win-item"><span class="win-check">✅</span><span>Retro Pop Co newsletter tool — Devin emailed Jordan to cancel; Jordan must action it</span></div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-ghost" onclick="selectAll()">Select All</button>
+  <button class="btn btn-ghost" onclick="selectNone()">Deselect All</button>
+  <span class="count-badge" id="count-label">22 / 22 selected</span>
+  <button class="btn btn-primary" id="create-btn" onclick="showModal()">Review &amp; Confirm →</button>
+</div>
+
+<div id="task-list"></div>
+
+<div class="footer-note">You can edit assignee, due date, priority, or list inline before confirming.</div>
+
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2>✅ Ready to Create in Tracker</h2>
+    <p class="sub" id="modal-sub"></p>
+    <div class="task-summary-list" id="modal-task-list"></div>
+    <div id="skipped-section"></div>
+    <div class="go-box">
+      <p>Type this in the chat to create these tasks:</p>
+      <span class="go-word">go</span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">← Back to Edit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TASKS = [
+  // MORGAN (6)
+  { id:1,  name:"Produce content + video for Summit Gear; prep for weekend pop-up event",
+    assignee:"Morgan", due:"2026-06-19", priority:"high",   list:"Summit Gear Co/Ongoing",
+    desc:"Content and video needed for the Summit brand presence + prep for the weekend pop-up event featuring the new product line.", note:null },
+
+  { id:2,  name:"Promote Summit Gear mini game via email this week",
+    assignee:"Morgan", due:"2026-06-20", priority:"high",   list:"Summit Gear Co/Ongoing",
+    desc:"The team built a mini game where collecting 10 tokens = discount code + leaderboard. Promote it via email before pivoting to the summer sale.", note:null },
+
+  { id:3,  name:"Begin setting up video/content studio in warehouse corridor",
+    assignee:"Morgan", due:"2026-06-20", priority:"normal", list:"Summit Gear Co/Ongoing",
+    desc:"Corridor that was going to be vacated is still available. Setting it up as a long-term content production studio this week.", note:null },
+
+  { id:4,  name:"Work Ridgeline Moto new gear + base layers restock into email campaigns",
+    assignee:"Morgan", due:"2026-06-20", priority:"normal", list:"Studio General/To-Do",
+    desc:"New Ridgeline Moto inventory has landed at the warehouse. Coordinate with Maya to integrate the new gear into upcoming email campaigns. Existing footage from a prior shoot is also unused.", note:"⚠️ Ridgeline Moto not in routing table — confirm correct list." },
+
+  { id:5,  name:"Create NorthOak July promo marketing assets",
+    assignee:"Morgan", due:"2026-06-25", priority:"normal", list:"NorthOak/Ongoing",
+    desc:"Start assets this week; priority ramps up from late June onward. Coordinate with Maya, who is also working on creative for this campaign.", note:null },
+
+  { id:6,  name:"Follow up with Lakeside on summer promotion plans",
+    assignee:"Morgan", due:"2026-06-20", priority:"normal", list:"Lakeside/Ongoing",
+    desc:"Check if Aaron / Lakeside wants to run any summer email or promo campaign. Separate from the event follow-up Maya is handling.", note:null },
+
+  // MAYA (7)
+  { id:7,  name:"Follow up with Aaron (Lakeside) re community event July 26–27",
+    assignee:"Maya", due:"2026-06-18", priority:"high",   list:"Lakeside/Ongoing",
+    desc:"Assigned in the meeting. Aaron mentioned thinking about a community event July 26–27. Maya to follow up and get details.", note:null },
+
+  { id:8,  name:"Complete NorthOak July creative assets",
+    assignee:"Maya", due:"2026-06-25", priority:"high",   list:"NorthOak/Ongoing",
+    desc:"Already emailed the client contact, started on creative. Priority ramps up late June. Devin will help with launch. Coordinate with Morgan on marketing assets.", note:null },
+
+  { id:9,  name:"Test ClipFlow with raw footage + connect to shared drive; report back",
+    assignee:"Maya", due:"2026-06-20", priority:"high",   list:"Studio General/To-Do",
+    desc:"Account is set up (Maya created it; Devin entered card for $58/mo after the 7-day trial). Test ClipFlow by connecting raw footage from the shared drive. Report back on whether it works.", note:null },
+
+  { id:10, name:"Set reminder to cancel ClipFlow trial before day 7 if not working out",
+    assignee:"Maya", due:"2026-06-22", priority:"normal", list:"Studio General/To-Do",
+    desc:"Trial started this week. Maya to set a personal reminder to cancel before day 7 ($58/mo) if ClipFlow doesn't prove useful.", note:null },
+
+  { id:11, name:"Rewrite NorthOak / SnapKit blog post (currently in draft mode)",
+    assignee:"Maya", due:"2026-06-25", priority:"normal", list:"NorthOak/Ongoing",
+    desc:"Blog post is in draft. Maya spoke with the client team and is rewriting it. Complete and publish when ready.", note:null },
+
+  { id:12, name:"Continue bi-weekly email-flow audits — Summit, NorthOak, Lakeside",
+    assignee:"Maya", due:"2026-06-20", priority:"normal", list:"Automation/To-Do",
+    desc:"NorthOak email revenue is up sharply YoY. Keep the flow-audit cadence going bi-weekly across all three accounts. Sam will set up the recurring tracker tasks.", note:null },
+
+  { id:13, name:"Finalize ERP / campaign assets once the client sends the new list",
+    assignee:"Maya", due:"2026-06-20", priority:"normal", list:"Studio General/To-Do",
+    desc:"Campaign brief is done. Waiting on the client to send the new list before assets can be finalized. Currently blocked.", note:"⚠️ Confirm correct list with the client contact." },
+
+  // SAM (3)
+  { id:14, name:"Set up bi-weekly email-flow audit recurring tasks (Summit, NorthOak, Lakeside)",
+    assignee:"Sam", due:"2026-06-17", priority:"high",   list:"Automation/To-Do",
+    desc:"Discussed in meeting — Sam will create recurring bi-weekly tracker tasks for Maya to run flow audits across all three accounts.", note:null },
+
+  { id:15, name:"Review the consolidated multi-client ecosystem audit document",
+    assignee:"Sam", due:"2026-06-20", priority:"normal", list:"Automation/To-Do",
+    desc:"The audit was redesigned to synthesize all clients into one document. Sam to review and align the audit workflow with the new format. Goal: spend 5 min reviewing it in every weekly meeting.", note:null },
+
+  { id:16, name:"Update audit workflow to match the monthly multi-client cadence",
+    assignee:"Sam", due:"2026-06-20", priority:"normal", list:"Automation/To-Do",
+    desc:"Align the automated audit workflow with the new consolidated format. Audit should run monthly (not weekly). Update any scheduling or automation accordingly.", note:null },
+
+  // DEVIN (6)
+  { id:17, name:"Send test outreach batch from automated prospecting + pitch system",
+    assignee:"Devin", due:"2026-06-20", priority:"high",   list:"Studio General/To-Do",
+    desc:"Built a fully automated system: a daily scraper targets local → regional → national e-commerce companies, ranks them, a second agent does a deep website audit, and it generates a one-page pitch doc with ecosystem gaps. Ready to send the first test batch.", note:null },
+
+  { id:18, name:"Follow up with Dana Kirsch re Crestline Brands marketing meeting",
+    assignee:"Devin", due:"2026-06-18", priority:"normal", list:"Studio General/To-Do",
+    desc:"Crestline Brands' new marketing lead is out of state. Missed the message about a Friday meeting. Follow up with Dana Kirsch to reschedule or confirm next steps.", note:null },
+
+  { id:19, name:"Verify ecosystem audit is scheduled to run monthly (not weekly)",
+    assignee:"Devin", due:"2026-06-17", priority:"normal", list:"Automation/To-Do",
+    desc:"The audit was redesigned to be monthly, consolidated across all clients. Confirm the automated cadence is set correctly and the shared folder is accessible to the team.", note:null },
+
+  { id:20, name:"Continue adding raw footage to shared drive for ClipFlow processing",
+    assignee:"Devin", due:"2026-06-30", priority:"normal", list:"Studio General/To-Do",
+    desc:"ClipFlow trial is live. Keep uploading raw video to the shared drive so Maya can test ClipFlow's auto-editing capabilities. Ongoing through the trial period.", note:null },
+
+  { id:21, name:"Confirm Jordan (Retro Pop Co) has cancelled the old newsletter account",
+    assignee:"Devin", due:"2026-06-17", priority:"normal", list:"Studio General/To-Do",
+    desc:"Emailed Jordan to cancel the old newsletter account (we can't cancel it ourselves — the client must do it). Follow up to confirm Jordan actioned it.", note:null },
+
+  { id:22, name:"Help Maya + Morgan with the NorthOak July launch",
+    assignee:"Devin", due:"2026-06-25", priority:"normal", list:"NorthOak/Ongoing",
+    desc:"Confirmed support for the NorthOak July campaign launch. Coordinate with Maya on creative and Morgan on marketing assets.", note:null },
+];
+
+const ASSIGNEES = ["Devin","Sam","Maya","Morgan","Alex","Alison"];
+const PRIORITIES = ["urgent","high","normal","low"];
+const PRIORITY_LABELS = { urgent:"🔴 Urgent", high:"🔶 High", normal:"🔵 Normal", low:"⚪ Low" };
+const SECTIONS = ["Morgan","Maya","Sam","Devin"];
+
+let state = TASKS.map(t => ({ ...t, approved: true }));
+
+function render() {
+  let html = '';
+  SECTIONS.forEach(person => {
+    const items = state.map((t,i) => ({t,i})).filter(({t}) => t.assignee === person);
+    if (!items.length) return;
+    html += `<div class="section-label">${person} (${items.length})</div>`;
+    items.forEach(({t,i}) => {
+      html += `
+      <div class="task-card ${t.approved ? 'approved' : 'skipped'}" id="card-${i}">
+        <div class="checkbox-wrap">
+          <input type="checkbox" ${t.approved ? 'checked' : ''} onchange="toggle(${i})">
+        </div>
+        <div class="task-body">
+          <div class="task-name">${t.name}</div>
+          <div class="task-meta">
+            <div class="meta-field">
+              <span class="meta-label">Assignee</span>
+              <select class="meta-select" onchange="updateField(${i},'assignee',this.value)">
+                ${ASSIGNEES.map(a => `<option ${a===t.assignee?'selected':''}>${a}</option>`).join('')}
+              </select>
+            </div>
+            <div class="meta-field">
+              <span class="meta-label">Due</span>
+              <input class="meta-input" type="date" value="${t.due}" onchange="updateField(${i},'due',this.value)">
+            </div>
+            <div class="meta-field">
+              <span class="meta-label">Priority</span>
+              <select class="meta-select" onchange="updateField(${i},'priority',this.value)">
+                ${PRIORITIES.map(p => `<option value="${p}" ${p===t.priority?'selected':''}>${PRIORITY_LABELS[p]}</option>`).join('')}
+              </select>
+            </div>
+            <div class="meta-field">
+              <span class="meta-label">List</span>
+              <input class="meta-input" type="text" value="${t.list}" style="width:175px" onchange="updateField(${i},'list',this.value)">
+            </div>
+          </div>
+          <div class="task-desc">${t.desc}</div>
+          ${t.note ? `<div class="task-note">${t.note}</div>` : ''}
+        </div>
+      </div>`;
+    });
+  });
+  document.getElementById('task-list').innerHTML = html;
+  updateCount();
+}
+
+function toggle(i) {
+  state[i].approved = !state[i].approved;
+  const card = document.getElementById(`card-${i}`);
+  card.classList.toggle('approved', state[i].approved);
+  card.classList.toggle('skipped', !state[i].approved);
+  updateCount();
+}
+
+function updateField(i, field, value) { state[i][field] = value; }
+function selectAll()  { state.forEach(t => t.approved = true);  render(); }
+function selectNone() { state.forEach(t => t.approved = false); render(); }
+
+function updateCount() {
+  const n = state.filter(t => t.approved).length;
+  document.getElementById('count-label').textContent = `${n} / ${state.length} selected`;
+  document.getElementById('create-btn').disabled = n === 0;
+}
+
+function showModal() {
+  const approved = state.filter(t => t.approved);
+  const skipped  = state.filter(t => !t.approved);
+
+  document.getElementById('modal-sub').textContent =
+    `${approved.length} task${approved.length!==1?'s':''} selected${skipped.length ? `, ${skipped.length} skipped` : ''}.`;
+
+  const listEl = document.getElementById('modal-task-list');
+  listEl.innerHTML = approved.map(t => `
+    <div class="summary-item">
+      <div class="summary-person">${t.assignee}</div>
+      <div class="summary-name">${t.name}</div>
+      <div class="summary-meta">${t.due.slice(5).replace('-','/')} · ${PRIORITY_LABELS[t.priority]}</div>
+    </div>
+  `).join('');
+
+  const skipEl = document.getElementById('skipped-section');
+  if (skipped.length) {
+    skipEl.innerHTML = `<p class="skipped-note">Skipping: ${skipped.map(t => t.name).join(', ')}</p>`;
+  } else {
+    skipEl.innerHTML = '';
+  }
+
+  document.getElementById('modal').classList.add('visible');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('visible');
+}
+
+render();
+</script>
+</body>
+</html>

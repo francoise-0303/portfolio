@@ -13,17 +13,18 @@
   header h1{font-size:34px;margin:0 0 6px;letter-spacing:-.5px}
   header p{margin:0;color:var(--muted);font-size:18px}
   .lede{margin:28px 0 40px;font-size:17px;color:#3a3a52;max-width:640px}
+  h2.sec{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+         margin:44px 0 18px;font-weight:700}
   .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
   .card{background:var(--card);border:1px solid #ece9f6;border-radius:16px;padding:24px;
         text-decoration:none;color:inherit;display:block;transition:transform .15s ease,box-shadow .15s ease}
   .card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(124,58,237,.12)}
-  .card h2{margin:0 0 8px;font-size:19px}
+  .card h3{margin:0 0 8px;font-size:19px}
   .card p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
   .tag{display:inline-block;font-size:12px;color:var(--accent);background:#f1ecfd;
        border-radius:999px;padding:3px 10px;margin-right:6px}
   .open{font-size:14px;font-weight:600;color:var(--accent)}
   footer{margin-top:56px;color:var(--muted);font-size:14px}
-  footer a{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -34,30 +35,67 @@
   </header>
 
   <p class="lede">
-    A few things I've built — small, self-contained web apps that solve real workflow
-    problems for me and the businesses I work with. Each one is live; click through and try it.
+    A few things I've built — small, self-contained web apps and live client sites that solve
+    real workflow and marketing problems. Everything here is clickable; go and try it.
   </p>
 
+  <h2 class="sec">Apps &amp; tools</h2>
   <div class="grid">
     <a class="card" href="./cyclical-time/">
-      <h2>Cyclical Time</h2>
+      <h3>Cyclical Time</h3>
       <p>A circular, seasonal alternative to the linear calendar — visualising tasks and time
          as rings rather than rows.</p>
       <span class="tag">Data viz</span><span class="tag">SVG</span>
-      <div class="open">Open the app →</div>
+      <div class="open">Open →</div>
+    </a>
+
+    <a class="card" href="./mindful-maker-quiz/">
+      <h3>The Mindful Maker Quiz</h3>
+      <p>An interactive personality quiz that scores your answers and reveals your "maker
+         archetype" — built for a fibre-arts brand.</p>
+      <span class="tag">Interactive</span><span class="tag">Quiz engine</span>
+      <div class="open">Open →</div>
+    </a>
+
+    <a class="card" href="./meeting-task-approval/">
+      <h3>Meeting Task Approval <span style="font-weight:400;font-size:13px;color:#9a96b3">(demo)</span></h3>
+      <p>A review board that turns meeting notes into editable, selectable tasks ready to push
+         to a project tracker. Shown with sample data.</p>
+      <span class="tag">Dashboard</span><span class="tag">Workflow</span>
+      <div class="open">Open →</div>
     </a>
 
     <a class="card" href="./slack-digest-demo/">
-      <h2>Daily Slack Digest <span style="font-weight:400;font-size:13px;color:#9a96b3">(demo)</span></h2>
+      <h3>Daily Slack Digest <span style="font-weight:400;font-size:13px;color:#9a96b3">(demo)</span></h3>
       <p>A morning briefing that turns noisy Slack threads into a prioritised, cross-referenced
-         to-do view. Shown here with sample data.</p>
+         to-do view. Shown with sample data.</p>
       <span class="tag">Dashboard</span><span class="tag">Automation</span>
-      <div class="open">Open the app →</div>
+      <div class="open">Open →</div>
+    </a>
+  </div>
+
+  <h2 class="sec">Live websites I've built</h2>
+  <div class="grid">
+    <a class="card" href="https://thepracticeoffibre.com" target="_blank" rel="noopener">
+      <h3>The Practice of Fibre</h3>
+      <p>Brand and site for a fibre-arts practice — identity, voice, and email-capture quiz,
+         built on Squarespace with Flodesk automation.</p>
+      <span class="tag">Branding</span><span class="tag">Squarespace</span>
+      <div class="open">Visit site →</div>
+    </a>
+
+    <a class="card" href="https://francoisedanoy.com" target="_blank" rel="noopener">
+      <h3>francoisedanoy.com</h3>
+      <p>My own practice site — positioning, services, and writing on AI and digital
+         transformation.</p>
+      <span class="tag">Personal brand</span><span class="tag">Web</span>
+      <div class="open">Visit site →</div>
     </a>
   </div>
 
   <footer>
-    Built with HTML, CSS and JavaScript.
+    Built with HTML, CSS and JavaScript. Demo versions use fictional sample data and never
+    contain real client information.
   </footer>
 </div>
 </body>

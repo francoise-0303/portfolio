@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<!--
+  THE FIBRE MUSE ARCHETYPE QUIZ — The Practice of Fibre
+  Self-contained interactive quiz. Scores 8 questions → 1 of 4 Muses,
+  gates the result behind an email, posts the subscriber + their Muse to
+  Flodesk (via a Zapier webhook), and shows a per-archetype result page.
+
+  ── TO GO LIVE ──────────────────────────────────────────────────────────
+  1. Set CONFIG.flodeskWebhookUrl below to your Zapier "Catch Hook" URL.
+  2. (Optional) Point each Muse's shopUrl at its pattern collection.
+  3. In Squarespace: add a CODE BLOCK on the quiz page and paste everything
+     from the <style> tag down through the closing </script> tag.
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Mindful Maker Quiz — The Practice of Fibre</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Raleway:wght@400;500;600&display=swap');
+/* All styles are scoped under #fibre-muse-quiz so they never collide with Squarespace. */
+#fibre-muse-quiz{
+  --bg:#F6F9FA; --card:#FFFFFF; --ink:#3D5462; --muted:#6F8794; --line:#DCE6E9;
+  --accent:#6C90A3;            /* overwritten per-result */
+  --radius:16px;
+  box-sizing:border-box; max-width:680px; margin:0 auto; padding:8px;
+  color:var(--ink);
+  font-family:'Raleway',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+#fibre-muse-quiz *{box-sizing:border-box}
+#fibre-muse-quiz .serif{font-family:'Cormorant Garamond',Georgia,"Times New Roman",serif}
+#fibre-muse-quiz h1,#fibre-muse-quiz h2,#fibre-muse-quiz h3{
+  font-family:'Cormorant Garamond',Georgia,"Times New Roman",serif; font-weight:600; line-height:1.15; margin:0;
+}
+#fibre-muse-quiz .stage{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:30px 26px; box-shadow:0 8px 30px rgba(59,53,46,.06);
+}
+#fibre-muse-quiz .eyebrow{
+  font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;
+}
+#fibre-muse-quiz .lede{color:#5c544a; font-size:16px; margin:12px 0 0}
+
+/* progress */
+#fibre-muse-quiz .progress-wrap{margin-bottom:20px}
+#fibre-muse-quiz .progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+#fibre-muse-quiz .progress-track{height:6px;background:#EFE8DD;border-radius:99px;overflow:hidden}
+#fibre-muse-quiz .progress-fill{height:100%;background:var(--accent);width:0;transition:width .35s ease}
+
+/* questions */
+#fibre-muse-quiz .q{font-size:21px;margin:0 0 18px}
+#fibre-muse-quiz .options{display:flex;flex-direction:column;gap:11px}
+#fibre-muse-quiz .opt{
+  text-align:left;width:100%;cursor:pointer;background:#fff;border:1.5px solid var(--line);
+  border-radius:13px;padding:15px 16px;font-size:15.5px;color:var(--ink);line-height:1.45;
+  transition:border-color .15s,background .15s,transform .05s; font-family:inherit;
+}
+#fibre-muse-quiz .opt:hover{border-color:#9DCEBB;background:#F3F8F9}
+#fibre-muse-quiz .opt:active{transform:scale(.995)}
+#fibre-muse-quiz .opt.sel{border-color:var(--accent);background:#EEF5F6;box-shadow:inset 0 0 0 1px var(--accent)}
+
+/* nav */
+#fibre-muse-quiz .nav{display:flex;justify-content:space-between;align-items:center;margin-top:22px}
+#fibre-muse-quiz .btn{
+  font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;border-radius:99px;
+  padding:12px 26px;border:1.5px solid var(--accent);background:var(--accent);color:#fff;transition:opacity .15s;
+}
+#fibre-muse-quiz .btn:hover{opacity:.9}
+#fibre-muse-quiz .btn[disabled]{opacity:.4;cursor:not-allowed}
+#fibre-muse-quiz .btn-ghost{background:transparent;color:var(--muted);border-color:transparent;padding:12px 8px}
+#fibre-muse-quiz .btn-ghost:hover{color:var(--ink)}
+
+/* email gate + result */
+#fibre-muse-quiz .center{text-align:center}
+#fibre-muse-quiz .field{
+  width:100%;font-size:16px;font-family:inherit;padding:14px 16px;border:1.5px solid var(--line);
+  border-radius:12px;margin-top:6px;color:var(--ink);background:#fff;
+}
+#fibre-muse-quiz .field:focus{outline:none;border-color:var(--accent)}
+#fibre-muse-quiz .fineprint{font-size:12px;color:var(--muted);margin-top:12px}
+#fibre-muse-quiz .err{color:#b3402f;font-size:13px;margin-top:8px;min-height:18px}
+#fibre-muse-quiz .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+#fibre-muse-quiz .result-emoji{font-size:54px;line-height:1}
+#fibre-muse-quiz .result-name{font-size:34px;margin:8px 0 2px;color:var(--accent)}
+#fibre-muse-quiz .result-tag{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#fibre-muse-quiz .result-desc{font-size:16.5px;color:#4f473d;margin:18px 0}
+#fibre-muse-quiz .traits{list-style:none;padding:0;margin:18px 0;text-align:left;display:inline-block}
+#fibre-muse-quiz .traits li{padding:5px 0 5px 26px;position:relative;font-size:15.5px}
+#fibre-muse-quiz .traits li:before{content:"✿";position:absolute;left:0;color:var(--accent)}
+#fibre-muse-quiz .panel{
+  background:#EEF5F6;border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:12px;padding:16px 18px;text-align:left;margin:20px 0;font-size:15px;color:#4f473d;
+}
+#fibre-muse-quiz .inbox{background:#EAF5EF;border-color:#CDE7DB;border-left-color:#739D8E;color:#3D5462}
+#fibre-muse-quiz .spinner{display:inline-block;animation:fmqspin 1s linear infinite}
+@keyframes fmqspin{to{transform:rotate(360deg)}}
+#fibre-muse-quiz a.retake{display:inline-block;margin-top:14px;color:var(--muted);font-size:13px;text-decoration:underline;cursor:pointer}
+@media (max-width:520px){
+  #fibre-muse-quiz .stage{padding:24px 18px}
+  #fibre-muse-quiz .q{font-size:19px}
+  #fibre-muse-quiz .result-name{font-size:28px}
+}
+</style>
+</head>
+<body>
+
+<div id="fibre-muse-quiz"><div class="stage" id="fmq-stage"><!-- rendered by JS --></div></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ── CONFIG ──────────────────────────────────────────────────────────
+  var CONFIG = {
+    // Paste your Zapier "Catch Hook" webhook URL here once it's set up:
+    flodeskWebhookUrl: "",
+    // Optional: paste a hosted URL of your logo to show it atop the quiz.
+    logoUrl: "",
+    siteUrl: "https://thepracticeoffibre.com"
+  };
+
+  // ── THE FOUR MUSES ──────────────────────────────────────────────────
+  var MUSES = {
+    seeker: {
+      key:"seeker", name:"The Yarn Seeker", emoji:"🧠", tag:"The Adventurous Spirit",
+      accent:"#739D8E",
+      desc:"\"I create to explore, experiment, and grow.\" You're the adventurer of the Mindful Makers, driven by curiosity and the thrill of discovery. Every project is a hands-on experiment, a chance to master a new technique and push your creative boundaries.",
+      traits:["Curiosity — discovery fuels your creative energy.","Exploration — you're fearless with bold patterns and new yarns.","Skill-building — you thrive on mastering techniques and growing."],
+      patterns:"Patterns made for you: the <strong>Challenging &amp; Technical</strong> bundle — intricate, ambitious makes that stretch your skills.",
+      guideUrl:"https://www.thepracticeoffibre.com/s/The-Yarn-Seeker-Guide-web.pdf",
+      shopUrl:"https://www.ravelry.com/bundles/the-seeker-patterns-for-self-discovery"
+    },
+    giver: {
+      key:"giver", name:"The Warmth Weaver", emoji:"🧣", tag:"The Nurturer",
+      accent:"#6C90A3",
+      desc:"\"I create to share love, care, and connection.\" You're the nurturer of the Mindful Makers. Making is an act of love, a tangible way to bring warmth and comfort to the people you care about. Every stitch is imbued with thoughtfulness and intention.",
+      traits:["Generosity — you pour love and care into every stitch.","Empathy — you create for the needs and hearts of others.","Community — your craft brings people together."],
+      patterns:"Patterns made for you: the <strong>Cozy &amp; Practical</strong> bundle — heartfelt makes built to be gifted and treasured.",
+      guideUrl:"https://www.thepracticeoffibre.com/s/The-Warmth-Weaver-Guide-web.pdf",
+      shopUrl:"https://www.ravelry.com/bundles/the-giver-patterns-for-selflessness"
+    },
+    mystic: {
+      key:"mystic", name:"The Thread Whisperer", emoji:"🌿", tag:"The Mystic",
+      accent:"#3D5462",
+      desc:"\"I create to find mindfulness, flow, and connection.\" You're the mystic of the Mindful Makers. Knitting is a sacred ritual, a way to find stillness in a busy world. You cherish the process over the product, weaving calm and intention into every stitch.",
+      traits:["Mindfulness — you turn your craft into a meditative practice.","Calmness — your patience brings balance to your work and life.","Harmony — your serene, simple pieces inspire peace in others."],
+      patterns:"Patterns made for you: the <strong>Meditative &amp; Mindful</strong> bundle — gentle, rhythmic makes for slow, soulful stitching.",
+      guideUrl:"https://www.thepracticeoffibre.com/s/The-Thread-Whisperer-Guide-web.pdf",
+      shopUrl:"https://www.ravelry.com/bundles/the-mystic-patterns-for-self-care"
+    },
+    dreamer: {
+      key:"dreamer", name:"The Woolgatherer", emoji:"🎨", tag:"The Whimsical Dreamer",
+      accent:"#805C87",
+      desc:"\"I create to explore ideas, imagination, and inspiration.\" You're the whimsical dreamer of the Mindful Makers. Creating is an adventure in possibility, a chance to gather inspiration and imagine what could be. You see potential where others see limits.",
+      traits:["Imagination — you see endless possibilities in every skein.","Vision — you weave disparate ideas into something meaningful.","Curiosity — your love of trying new things keeps you inspired."],
+      patterns:"Patterns made for you: the <strong>Whimsical &amp; Playful</strong> bundle — vivid, imaginative makes that stand out.",
+      guideUrl:"https://www.thepracticeoffibre.com/s/The-Woolgatherer-Guide-web.pdf",
+      shopUrl:"https://www.ravelry.com/bundles/the-dreamer-patterns-for-self-expression"
+    }
+  };
+
+  // ── THE QUIZ (each option tagged with the Muse it scores for) ────────
+  var QUESTIONS = [
+    {q:"Why do you create?", o:[
+      {t:"To experiment with new techniques and challenge myself to grow.", m:"seeker"},
+      {t:"To gather inspiration, explore ideas, and dream big.", m:"dreamer"},
+      {t:"To share love, care, and comfort with others through the gifts of my hands.", m:"giver"},
+      {t:"To find peace, balance, and mindfulness in the act of making.", m:"mystic"}
+    ]},
+    {q:"What brings you the most joy in your creative practice?", o:[
+      {t:"The meditative flow and quiet focus of working with my hands.", m:"mystic"},
+      {t:"Mastering skills and pushing the boundaries of what I can do.", m:"seeker"},
+      {t:"Discovering new patterns and possibilities that spark my imagination.", m:"dreamer"},
+      {t:"Seeing the joy my handmade creations bring to the people I care about.", m:"giver"}
+    ]},
+    {q:"What best describes your creative style?", o:[
+      {t:"A mix of earthy tones and textures that connect with the natural world.", m:"seeker"},
+      {t:"Warm, practical, and comforting items with timeless appeal.", m:"giver"},
+      {t:"Bold and vibrant designs that express my unique vision.", m:"dreamer"},
+      {t:"Minimalist and serene pieces that soothe the soul.", m:"mystic"}
+    ]},
+    {q:"What do you seek most in your creative journey?", o:[
+      {t:"Connection and the chance to show others I care.", m:"giver"},
+      {t:"A sense of peace and harmony in my everyday life.", m:"mystic"},
+      {t:"Inspiration and the freedom to dream without limits.", m:"dreamer"},
+      {t:"Growth and the satisfaction of achieving something new.", m:"seeker"}
+    ]},
+    {q:"You're choosing yarn for a new project. What catches your eye?", o:[
+      {t:"Warm, versatile neutrals perfect for gifting and sharing.", m:"giver"},
+      {t:"Soft, muted shades that inspire calm and introspection.", m:"mystic"},
+      {t:"Natural tones and textures that remind me of the earth.", m:"seeker"},
+      {t:"Bright, eclectic colors that stand out and make a statement.", m:"dreamer"}
+    ]},
+    {q:"What do you find most challenging in your creative process?", o:[
+      {t:"Carving out time and space for mindful, uninterrupted making.", m:"mystic"},
+      {t:"Staying focused when there's so much inspiration to explore.", m:"dreamer"},
+      {t:"Turning big ideas into reality and finishing what I start.", m:"seeker"},
+      {t:"Balancing my creative energy with my desire to give to others.", m:"giver"}
+    ]},
+    {q:"What values guide your approach to making?", o:[
+      {t:"Generosity, compassion, and connection.", m:"giver"},
+      {t:"Originality, growth, and creativity.", m:"dreamer"},
+      {t:"Harmony, mindfulness, and balance.", m:"mystic"},
+      {t:"Curiosity, exploration, and sustainability.", m:"seeker"}
+    ]},
+    {q:"How do you feel when working on a creative project?", o:[
+      {t:"Excited by the endless potential of what I can create.", m:"dreamer"},
+      {t:"Calm and centered, like I'm fully present in the moment.", m:"mystic"},
+      {t:"Energized by the challenge and eager to see how it will turn out.", m:"seeker"},
+      {t:"Fulfilled, knowing my work will bring comfort and connection to others.", m:"giver"}
+    ]}
+  ];
+
+  // ── STATE ───────────────────────────────────────────────────────────
+  var answers = [];           // answers[i] = chosen muse key for question i
+  var current = 0;            // current question index
+  var stage = document.getElementById("fmq-stage");
+
+  function setAccent(c){ document.getElementById("fibre-muse-quiz").style.setProperty("--accent", c); }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+  // ── SCREENS ─────────────────────────────────────────────────────────
+  function renderIntro(){
+    setAccent("#6C90A3");
+    var logo = CONFIG.logoUrl ? '<img src="'+CONFIG.logoUrl+'" alt="The Practice of Fibre" style="max-width:240px;width:62%;margin:0 auto 16px;display:block">' : '';
+    stage.innerHTML =
+      '<div class="center">'+
+        logo+
+        '<div class="eyebrow">The Practice of Fibre</div>'+
+        '<h1 class="serif" style="font-size:36px">Discover Your Mindful Maker Archetype</h1>'+
+        '<p class="lede">Eight quick questions to reveal the creative archetype that guides your making, and the patterns made just for you. Your result comes with a free guide.</p>'+
+        '<div style="margin-top:26px"><button class="btn" id="fmq-begin">Begin the quiz →</button></div>'+
+        '<div class="fineprint">Takes about 2 minutes</div>'+
+      '</div>';
+    document.getElementById("fmq-begin").onclick = function(){ current=0; renderQuestion(); };
+  }
+
+  function renderQuestion(){
+    var item = QUESTIONS[current];
+    var pct = Math.round((current/QUESTIONS.length)*100);
+    var opts = item.o.map(function(opt,i){
+      var sel = answers[current]===opt.m ? " sel" : "";
+      return '<button class="opt'+sel+'" data-muse="'+opt.m+'">'+esc(opt.t)+'</button>';
+    }).join("");
+    stage.innerHTML =
+      '<div class="progress-wrap">'+
+        '<div class="progress-meta"><span>Question '+(current+1)+' of '+QUESTIONS.length+'</span><span>'+pct+'%</span></div>'+
+        '<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>'+
+      '</div>'+
+      '<h2 class="q serif">'+esc(item.q)+'</h2>'+
+      '<div class="options">'+opts+'</div>'+
+      '<div class="nav">'+
+        (current>0 ? '<button class="btn-ghost btn" id="fmq-back">← Back</button>' : '<span></span>')+
+        '<span></span>'+
+      '</div>';
+    Array.prototype.forEach.call(stage.querySelectorAll(".opt"), function(b){
+      b.onclick = function(){
+        answers[current] = b.getAttribute("data-muse");
+        Array.prototype.forEach.call(stage.querySelectorAll(".opt"), function(x){ x.classList.remove("sel"); });
+        b.classList.add("sel");
+        setTimeout(next, 230);   // small beat so the selection registers visually
+      };
+    });
+    var back = document.getElementById("fmq-back");
+    if(back) back.onclick = function(){ current=Math.max(0,current-1); renderQuestion(); };
+  }
+
+  function next(){
+    if(current < QUESTIONS.length-1){ current++; renderQuestion(); }
+    else { renderEmailGate(); }
+  }
+
+  function tally(){
+    var counts = {seeker:0,giver:0,mystic:0,dreamer:0};
+    answers.forEach(function(m){ if(counts[m]!=null) counts[m]++; });
+    var max = Math.max(counts.seeker,counts.giver,counts.mystic,counts.dreamer);
+    // Tie-break: favour the Muse the maker chose first.
+    for(var i=0;i<answers.length;i++){ if(counts[answers[i]]===max) return answers[i]; }
+    return "mystic";
+  }
+
+  function renderEmailGate(){
+    setAccent("#6C90A3");
+    stage.innerHTML =
+      '<div class="center">'+
+        '<div class="result-emoji">✨</div>'+
+        '<h2 class="serif" style="font-size:26px;margin-top:6px">Your archetype is ready</h2>'+
+        '<p class="lede">Enter your email to reveal your archetype and get your free guide delivered to your inbox.</p>'+
+        '<form id="fmq-form" style="margin-top:18px;text-align:left" novalidate>'+
+          '<input class="field" type="email" id="fmq-email" placeholder="you@example.com" autocomplete="email" required>'+
+          '<input class="hp" type="text" id="fmq-website" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="Leave blank">'+
+          '<div class="err" id="fmq-err"></div>'+
+          '<div class="center"><button class="btn" type="submit" id="fmq-submit" style="margin-top:6px">Reveal my Muse ✦</button></div>'+
+        '</form>'+
+        '<div class="fineprint">You\'ll also join The Practice of Fibre letter. Unsubscribe anytime.</div>'+
+      '</div>';
+    document.getElementById("fmq-form").onsubmit = function(e){ e.preventDefault(); submitEmail(); };
+  }
+
+  function submitEmail(){
+    var email = (document.getElementById("fmq-email").value||"").trim();
+    var honey = (document.getElementById("fmq-website").value||"").trim();
+    var err = document.getElementById("fmq-err");
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent="Please enter a valid email address."; return; }
+    if(honey){ renderResult(); return; }   // bot trap: silently pass without subscribing
+
+    var muse = tally();
+    var btn = document.getElementById("fmq-submit");
+    btn.disabled = true; btn.innerHTML = '<span class="spinner">✦</span> Revealing…';
+
+    sendToFlodesk(email, muse);
+    // Reveal the result regardless of network outcome so the maker is never blocked.
+    setTimeout(function(){ renderResult(muse, email); }, 600);
+  }
+
+  function sendToFlodesk(email, museKey){
+    var url = CONFIG.flodeskWebhookUrl;
+    if(!/^https?:\/\//.test(url)){ if(window.console) console.warn("Fibre Muse quiz: flodeskWebhookUrl not set — email not captured."); return; }
+    var muse = MUSES[museKey];
+    var body = "email="+encodeURIComponent(email)
+             + "&archetype="+encodeURIComponent(museKey)
+             + "&archetype_name="+encodeURIComponent(muse.name)
+             + "&pattern_collection="+encodeURIComponent(muse.tag)
+             + "&source=fibre-muse-quiz";
+    try{
+      fetch(url, {method:"POST", mode:"no-cors", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:body})
+        .catch(function(){ /* fire-and-forget */ });
+    }catch(e){ /* ignore */ }
+  }
+
+  function renderResult(museKey, email){
+    museKey = museKey || tally();
+    var m = MUSES[museKey];
+    setAccent(m.accent);
+    var traits = m.traits.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join("");
+    var inbox = email
+      ? '<div class="panel inbox">📬 Your free <strong>'+esc(m.name)+'</strong> guide is on its way to <strong>'+esc(email)+'</strong>. Check your inbox (and your promotions/spam folder, just in case).</div>'
+      : '';
+    stage.innerHTML =
+      '<div class="center">'+
+        '<div class="eyebrow">Your Mindful Maker archetype is</div>'+
+        '<div class="result-emoji">'+m.emoji+'</div>'+
+        '<h1 class="result-name serif">'+esc(m.name)+'</h1>'+
+        '<div class="result-tag">'+esc(m.tag)+'</div>'+
+        '<p class="result-desc">'+esc(m.desc)+'</p>'+
+        '<ul class="traits">'+traits+'</ul>'+
+        inbox+
+        (m.guideUrl ? '<div style="margin:8px 0 16px"><a class="btn" href="'+m.guideUrl+'" target="_blank" rel="noopener">✦ Open your free '+esc(m.name)+' guide</a></div>' : '')+
+        '<div class="panel">'+m.patterns+'</div>'+
+        '<div><a class="btn" href="'+m.shopUrl+'" target="_blank" rel="noopener" style="background:transparent;color:var(--accent)">Explore the patterns →</a></div>'+
+        '<a class="retake" id="fmq-retake">↺ Retake the quiz</a>'+
+      '</div>';
+    var r = document.getElementById("fmq-retake");
+    if(r) r.onclick = function(){ answers=[]; current=0; renderIntro(); };
+  }
+
+  // ── GO ──────────────────────────────────────────────────────────────
+  renderIntro();
+})();
+</script>
+</body>
+</html>
