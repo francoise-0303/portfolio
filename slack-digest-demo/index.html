@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Daily Slack Digest",
+  "schemaVersion": 1,
+  "description": "Daily Slack digest (demo — sample data) for Sam — channel highlights, action items, and ClickUp cross-reference. Refreshes on reload."
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Slack Digest</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f7f7f8;
+    color: #1a1a1a;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+  .header h1 { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
+  .header p { opacity: 0.85; font-size: 13px; }
+  .week-banner {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #1e40af;
+  }
+  .week-banner strong { display: block; font-size: 14px; margin-bottom: 2px; }
+  .section { margin-bottom: 20px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+  .card {
+    background: white;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border: 1px solid #e5e7eb;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .channel-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a154b;
+    background: #f3e8ff;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .channel-badge.green { color: #059669; background: #d1fae5; }
+  .channel-badge.blue { color: #1d4ed8; background: #dbeafe; }
+  .channel-badge.orange { color: #b45309; background: #fef3c7; }
+  .channel-badge.gray { color: #374151; background: #f3f4f6; }
+  .new-tag {
+    font-size: 10px;
+    font-weight: 700;
+    background: #dcfce7;
+    color: #166534;
+    padding: 1px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+  .card-date { font-size: 11px; color: #9ca3af; margin-left: auto; }
+  .card p { color: #374151; font-size: 13px; }
+  .action-item {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .action-item.overdue { border-left: 3px solid #ef4444; }
+  .action-item.new-task { border-left: 3px solid #8b5cf6; }
+  .action-item.existing { border-left: 3px solid #3b82f6; }
+  .action-item.yours { border-left: 3px solid #f59e0b; }
+  .action-item.carryover { border-left: 3px solid #f97316; }
+  .action-meta { flex: 1; }
+  .action-meta strong { font-size: 13px; color: #111827; display: block; margin-bottom: 2px; }
+  .action-meta span { font-size: 12px; color: #6b7280; }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    white-space: nowrap;
+  }
+  .badge.red { background: #fee2e2; color: #b91c1c; }
+  .badge.purple { background: #ede9fe; color: #6d28d9; }
+  .badge.blue { background: #dbeafe; color: #1d4ed8; }
+  .badge.yellow { background: #fef3c7; color: #92400e; }
+  .badge.orange { background: #ffedd5; color: #9a3412; }
+  .badge.gray { background: #f3f4f6; color: #4b5563; }
+  .clickup-link {
+    font-size: 11px;
+    color: #7c3aed;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 3px;
+  }
+  .clickup-link:hover { text-decoration: underline; }
+  .divider { border: none; border-top: 1px solid #f0f0f0; margin: 8px 0; }
+  .suggest-box {
+    background: #faf5ff;
+    border: 1px solid #e9d5ff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #374151;
+  }
+  .suggest-box p { margin-bottom: 6px; }
+  .suggest-box p:last-child { margin-bottom: 0; }
+  .quiet-note {
+    font-size: 12px;
+    color: #6b7280;
+    text-align: center;
+    padding: 8px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>☀️ Morning Briefing — Monday, April 27</h1>
+  <p>Slack digest · Week of Apr 27 kick-off · Cross-referenced with ClickUp</p>
+</div>
+
+<div class="week-banner">
+  <strong>🗓 It's Monday — new week, fresh start</strong>
+  No weekly priorities post in #team-updates yet. Today's team sync is a good moment to log this week's top 3s for Morgan and Maya.
+</div>
+
+<!-- NEW TODAY -->
+<div class="section">
+  <div class="section-title">🆕 New Since Yesterday</div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="channel-badge">#shopify-dev</span>
+      <span class="new-tag">TODAY</span>
+      <span class="card-date">Apr 27 · 8:20am CDT</span>
+    </div>
+    <p><strong>Morgan → Alex:</strong> "Hey Alex, any luck with the Acme form to spreadsheet sync?" — Following up on the Shopify Flow task (wishlist submissions → Google Sheet) that was assigned to Alex on April 16. No reply yet. This has been sitting for 11 days.</p>
+  </div>
+</div>
+
+<!-- CARRIED OVER FROM LAST WEEK -->
+<div class="section">
+  <div class="section-title">📋 Active Threads Carried Into This Week</div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="channel-badge">#shopify-dev</span>
+      <span class="card-date">Apr 23–24</span>
+    </div>
+    <p><strong>Summit Gear product image setup:</strong> Morgan working with Alex to clean up product images — need all product shots (not just primary), white JPEGs over transparent backgrounds, careful not to download cropped versions. Alex now has Shopify access.<br><br>
+    <strong>Aurora Parts sync:</strong> Morgan flagged to Sam — wants real-time price + inventory syncing via Aurora Parts by May. No ClickUp task created yet.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="channel-badge blue">#acmeretail</span>
+      <span class="card-date">Apr 22–24</span>
+    </div>
+    <p><strong>SMS moving but compliance step needed:</strong> Maya added text signup to Klaviyo popup ✅, SMS number verified ✅, welcome flow built ✅. Devin approved the popup + delivery email. <br><br>
+    Open item from Apr 24: Maya asked Morgan to add a "click to join" SMS consent button in emails + a static signup form on the Acme site. Morgan confirmed doable. Still needs to be built — no ClickUp task yet.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="channel-badge green">#northwind</span>
+      <span class="card-date">Recent</span>
+    </div>
+    <p><strong>Amazon listing:</strong> Live but still populating. Identity verification pending — Morgan may need Chris to resubmit driver's license + address docs.<br><br>
+    <strong>Brand assets:</strong> Maya completed branding guide, crest, business cards. JPGs sent to Morgan.</p>
+  </div>
+</div>
+
+<!-- ACTION ITEMS -->
+<div class="section">
+  <div class="section-title">✅ Action Items — Who Owns What</div>
+
+  <div class="action-item overdue">
+    <span class="badge red">OVERDUE</span>
+    <div class="action-meta">
+      <strong>Connect API for Summit Gear Co listings — Alex</strong>
+      <span>Due ~Apr 19. Still "to do" in ClickUp. Flagged as blocking content creation since Apr 13. Morgan is also now waiting on the Acme form sync from Alex. May be worth a direct check-in today.</span><br>
+      <a class="clickup-link" href="https://app.clickup.com/t/868j83eka" target="_blank">↗ View in ClickUp</a>
+    </div>
+  </div>
+
+  <div class="action-item carryover">
+    <span class="badge orange">PAST DUE</span>
+    <div class="action-meta">
+      <strong>Summit Gear campaigns — Aurora Parts drop — Morgan</strong>
+      <span>Was due Friday Apr 25. Still marked "in progress" in Weekly Priorities. Worth checking in at today's sync — what's the status and new target date?</span><br>
+      <a class="clickup-link" href="https://app.clickup.com/t/868j5gkyd" target="_blank">↗ View in ClickUp</a>
+    </div>
+  </div>
+
+  <div class="action-item yours">
+    <span class="badge yellow">YOURS</span>
+    <div class="action-meta">
+      <strong>Aurora Parts real-time sync — Sam to scope</strong>
+      <span>Morgan tagged you Apr 23. Wants a plan for real-time price + inventory sync by May. No task created yet. Good one to add to ClickUp today.</span><br>
+      <span style="color:#7c3aed; font-size:12px;">→ Suggested: New task in Summit Gear / Spring 2026 Campaign</span>
+    </div>
+  </div>
+
+  <div class="action-item yours">
+    <span class="badge yellow">YOURS</span>
+    <div class="action-meta">
+      <strong>Configure northwind Amazon account settings — Sam</strong>
+      <span>Tax, shipping & returns setup. Assigned to you in ClickUp with an upcoming due date.</span><br>
+      <a class="clickup-link" href="https://app.clickup.com/t/868j82dgd" target="_blank">↗ View in ClickUp</a>
+    </div>
+  </div>
+
+  <div class="action-item new-task">
+    <span class="badge purple">NEW TASK?</span>
+    <div class="action-meta">
+      <strong>Acme SMS consent compliance — Maya + Morgan</strong>
+      <span>"Click to join" email button + dedicated static signup form on site. Discussed Apr 24, not yet in ClickUp.</span><br>
+      <span style="color:#7c3aed; font-size:12px;">→ Suggested: New task in Acme / Email & Lifecycle</span>
+    </div>
+  </div>
+
+  <div class="action-item existing">
+    <span class="badge blue">PENDING</span>
+    <div class="action-meta">
+      <strong>Acme form → Google Spreadsheet sync — Alex</strong>
+      <span>Morgan assigned this Apr 16, followed up this morning (Apr 27). Still no response. 11 days outstanding.</span><br>
+      <span style="color:#7c3aed; font-size:12px;">→ Consider logging in ClickUp to track if not already there</span>
+    </div>
+  </div>
+
+  <div class="action-item existing">
+    <span class="badge blue">PENDING</span>
+    <div class="action-meta">
+      <strong>Chase Chris Griffith for Amazon identity docs — Morgan</strong>
+      <span>Driver's license, proof of address, letter of authorization — blocking team user access on Amazon Seller Central.</span><br>
+      <a class="clickup-link" href="https://app.clickup.com/t/868jbxf8c" target="_blank">↗ View in ClickUp</a>
+    </div>
+  </div>
+</div>
+
+<!-- SUGGESTED ACTIONS -->
+<div class="section">
+  <div class="section-title">💡 Suggested for Today</div>
+  <div class="suggest-box">
+    <p><strong>1. Post weekly priorities in #team-updates</strong> after this morning's sync — Morgan and Maya's top 3s for the week.</p>
+    <hr class="divider">
+    <p><strong>2. Follow up with Alex</strong> — two open items: Summit Gear API (overdue, blocking content) and Acme wishlist → Google Sheet sync (11 days, no update).</p>
+    <hr class="divider">
+    <p><strong>3. Create 2 new ClickUp tasks:</strong> Aurora Parts sync scoping (yours) + Acme SMS consent form (Maya + Morgan).</p>
+    <hr class="divider">
+    <p><strong>4. At sync: get a new due date</strong> for Summit Gear campaigns — was due Friday, still in progress.</p>
+  </div>
+</div>
+
+<p class="quiet-note">Slack data pulled April 27, 2026 · ClickUp cross-referenced live</p>
+
+</body>
+</html>
