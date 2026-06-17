@@ -4,71 +4,117 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Françoise Danoy — Portfolio</title>
+
+<!-- Brand fonts: Cormorant Garamond for headings, Raleway for body -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  :root{ --ink:#1a1a2e; --muted:#5b5b73; --accent:#7c3aed; --card:#fff; --bg:#f6f5fb; }
+  /* ── The Practice brand palette ───────────────────────── */
+  :root{
+    --slate:#3D5462;     /* Deep Slate — headings & text */
+    --dusty:#6C90A3;     /* Dusty Blue — secondary text */
+    --sage:#739D8E;      /* Sage — accents, links */
+    --seafoam:#9DCEBB;   /* Seafoam — soft tints */
+    --plum:#805C87;      /* Plum — used sparingly */
+    --paper:#F6F9FA;     /* Paper — background */
+    --line:#E2ECE7;      /* soft sage-grey for borders */
+  }
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-       background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:880px;margin:0 auto;padding:64px 24px 96px}
-  header h1{font-size:34px;margin:0 0 6px;letter-spacing:-.5px}
-  header p{margin:0;color:var(--muted);font-size:18px}
-  .lede{margin:28px 0 40px;font-size:17px;color:#3a3a52;max-width:640px}
-  h2.sec{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
-         margin:44px 0 18px;font-weight:700}
+  body{
+    margin:0;
+    font-family:'Raleway',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);
+    color:var(--slate);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:72px 24px 100px}
+
+  /* Headings use the serif brand face */
+  h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;color:var(--slate);font-weight:600}
+
+  header .eyebrow{
+    font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.18em;color:var(--sage);margin:0 0 12px;
+  }
+  header h1{font-size:46px;line-height:1.05;margin:0 0 10px;letter-spacing:-.5px}
+  header .tagline{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:23px;color:var(--dusty);margin:0;
+  }
+
+  .lede{margin:30px 0 8px;font-size:17.5px;color:var(--slate);max-width:660px}
+  .lede .quiet{color:var(--dusty)}
+
+  h2.sec{
+    font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.16em;color:var(--sage);
+    margin:52px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line);
+  }
+
   .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
-  .card{background:var(--card);border:1px solid #ece9f6;border-radius:16px;padding:24px;
-        text-decoration:none;color:inherit;display:block;transition:transform .15s ease,box-shadow .15s ease}
-  .card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(124,58,237,.12)}
-  .card h3{margin:0 0 8px;font-size:19px}
-  .card p{margin:0 0 14px;color:var(--muted);font-size:14.5px}
-  .tag{display:inline-block;font-size:12px;color:var(--accent);background:#f1ecfd;
-       border-radius:999px;padding:3px 10px;margin-right:6px}
-  .open{font-size:14px;font-weight:600;color:var(--accent)}
-  footer{margin-top:56px;color:var(--muted);font-size:14px}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px;
+    text-decoration:none;color:inherit;display:block;
+    transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(61,84,98,.10);border-color:var(--seafoam)}
+  .card h3{margin:0 0 8px;font-size:24px;line-height:1.15}
+  .card h3 .demo{font-family:'Raleway',sans-serif;font-size:12px;font-weight:500;color:var(--dusty)}
+  .card p{margin:0 0 16px;color:var(--dusty);font-size:14.5px}
+  .tag{
+    display:inline-block;font-family:'Raleway',sans-serif;font-size:11.5px;font-weight:600;
+    color:var(--sage);background:#EAF2EE;border-radius:999px;padding:3px 11px;margin-right:6px;
+  }
+  .open{font-family:'Raleway',sans-serif;font-size:13.5px;font-weight:600;color:var(--sage)}
+
+  footer{
+    margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+    color:var(--dusty);font-size:13.5px;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Françoise Danoy</h1>
-    <p>AI &amp; digital transformation, led with aroha</p>
+    <p class="eyebrow">Françoise Danoy</p>
+    <h1>Things I've made.</h1>
+    <p class="tagline">Operations, built with aroha.</p>
   </header>
 
   <p class="lede">
-    A few things I've built — small, self-contained web apps and live client sites that solve
-    real workflow and marketing problems. Everything here is clickable; go and try it.
+    Small, self-contained web apps and live client sites I've built to take the friction out of
+    real workflows. <span class="quiet">Technology is the easy part — everything here is clickable, so go and try it.</span>
   </p>
 
   <h2 class="sec">Apps &amp; tools</h2>
   <div class="grid">
     <a class="card" href="./cyclical-time/">
       <h3>Cyclical Time</h3>
-      <p>A circular, seasonal alternative to the linear calendar — visualising tasks and time
-         as rings rather than rows.</p>
+      <p>A circular, seasonal alternative to the linear calendar — time and tasks as rings rather than rows.</p>
       <span class="tag">Data viz</span><span class="tag">SVG</span>
       <div class="open">Open →</div>
     </a>
 
     <a class="card" href="./mindful-maker-quiz/">
       <h3>The Mindful Maker Quiz</h3>
-      <p>An interactive personality quiz that scores your answers and reveals your "maker
-         archetype" — built for a fibre-arts brand.</p>
+      <p>An interactive quiz that scores your answers and reveals your maker archetype — built for a fibre-arts brand.</p>
       <span class="tag">Interactive</span><span class="tag">Quiz engine</span>
       <div class="open">Open →</div>
     </a>
 
     <a class="card" href="./meeting-task-approval/">
-      <h3>Meeting Task Approval <span style="font-weight:400;font-size:13px;color:#9a96b3">(demo)</span></h3>
-      <p>A review board that turns meeting notes into editable, selectable tasks ready to push
-         to a project tracker. Shown with sample data.</p>
+      <h3>Meeting Task Approval <span class="demo">· demo</span></h3>
+      <p>A review board that turns meeting notes into editable, selectable tasks ready to push to a tracker. Sample data.</p>
       <span class="tag">Dashboard</span><span class="tag">Workflow</span>
       <div class="open">Open →</div>
     </a>
 
     <a class="card" href="./slack-digest-demo/">
-      <h3>Daily Slack Digest <span style="font-weight:400;font-size:13px;color:#9a96b3">(demo)</span></h3>
-      <p>A morning briefing that turns noisy Slack threads into a prioritised, cross-referenced
-         to-do view. Shown with sample data.</p>
+      <h3>Daily Slack Digest <span class="demo">· demo</span></h3>
+      <p>A morning briefing that turns noisy Slack threads into a prioritised, cross-referenced to-do view. Sample data.</p>
       <span class="tag">Dashboard</span><span class="tag">Automation</span>
       <div class="open">Open →</div>
     </a>
@@ -78,24 +124,22 @@
   <div class="grid">
     <a class="card" href="https://thepracticeoffibre.com" target="_blank" rel="noopener">
       <h3>The Practice of Fibre</h3>
-      <p>Brand and site for a fibre-arts practice — identity, voice, and email-capture quiz,
-         built on Squarespace with Flodesk automation.</p>
+      <p>Brand and site for a mindful fibre-arts practice — identity, voice, and an email-capture quiz, on Squarespace with Flodesk automation.</p>
       <span class="tag">Branding</span><span class="tag">Squarespace</span>
       <div class="open">Visit site →</div>
     </a>
 
     <a class="card" href="https://francoisedanoy.com" target="_blank" rel="noopener">
       <h3>francoisedanoy.com</h3>
-      <p>My own practice site — positioning, services, and writing on AI and digital
-         transformation.</p>
-      <span class="tag">Personal brand</span><span class="tag">Web</span>
+      <p>My own practice site — hand-coded positioning, services, and writing on operations and digital transformation.</p>
+      <span class="tag">Personal brand</span><span class="tag">Hand-coded</span>
       <div class="open">Visit site →</div>
     </a>
   </div>
 
   <footer>
-    Built with HTML, CSS and JavaScript. Demo versions use fictional sample data and never
-    contain real client information.
+    Built by hand with HTML, CSS and JavaScript. Demo versions use fictional sample data and
+    contain no real client information.
   </footer>
 </div>
 </body>
